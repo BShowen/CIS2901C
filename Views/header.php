@@ -19,9 +19,10 @@
   <nav>
     <ul>
       <li><a href="./index.php">Dashboard</a></li>
+      <li><a href="./employees.php">Employees</a></li>
+      <li><a href="./inventory.php">Inventory</a></li>
       <li><a href="./customers.php">Customers</a></li>
       <li><a href="./sales.php">Sales</a></li>
       <li><a href="./invoices.php">Invoices</a></li>
-      <li><a href="./inventory.php">Inventory</a></li>
     </ul>
   </nav>

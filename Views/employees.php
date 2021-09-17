@@ -4,7 +4,7 @@ $page = new Page();
 
 $db = new Database();
 
-$query = "SELECT * FROM Inventory_items";
+$query = "SELECT first_name, last_name, user_name, email_address FROM Employees";
 $result = $db->execute_sql_statement($query);
 $table_rows = "";
 if($result[0]){
@@ -12,10 +12,10 @@ if($result[0]){
   while ($row = $result->fetch_assoc()) {
     extract($row);
     $table_rows.="<tr>
-    <td>$item_name</td>
-    <td>$item_description</td>
-    <td>$in_stock</td>
-    <td>$stock_level</td>
+    <td>$first_name</td>
+    <td>$last_name</td>
+    <td>$user_name</td>
+    <td>$email_address</td>
     </tr>";
   }
 }
@@ -23,13 +23,13 @@ if($result[0]){
 <main>
   <div class="table">
     <table>
-      <caption><h1>Inventory</h1></caption>
+      <caption><h1>Employees</h1></caption>
       <tbody>
         <tr>
-          <th scope="col">Item name</th>
-          <th scope="col">Item Description</th>
-          <th scope="col">In stock</th>
-          <th scope="col">Stock level</th>
+          <th scope="col">First name</th>
+          <th scope="col">Last name</th>
+          <th scope="col">User name</th>
+          <th scope="col">Email address</th>
         </tr>
         <?php echo $table_rows; ?>
       </tbody>

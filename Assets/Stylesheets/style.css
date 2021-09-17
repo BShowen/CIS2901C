@@ -38,4 +38,23 @@ nav ul li {
 main {
   margin-left: 250px;
   height: 100vh;
+  padding: 30px 100px;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+table th, td {
+  padding: 10px;
+}
+
+table th {
+  background-color: lightgray;
+}
+
+table {
+  width: 100%;
+  text-align: center;
 }
