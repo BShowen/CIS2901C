@@ -14,6 +14,7 @@ if($result[0]){
     $table_rows.="<tr>
     <td>$item_name</td>
     <td>$item_description</td>
+    <td>$price</td>
     <td>$in_stock</td>
     <td>$stock_level</td>
     </tr>";
@@ -28,6 +29,7 @@ if($result[0]){
         <tr>
           <th scope="col">Item name</th>
           <th scope="col">Item Description</th>
+          <th scope="col">Price</th>
           <th scope="col">In stock</th>
           <th scope="col">Stock level</th>
         </tr>
