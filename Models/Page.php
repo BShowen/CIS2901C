@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 // Require in the script for connecting to the database. This is done here so that every 
 // Page has access to the database if they need it. 
 require __DIR__."/Database.php";
