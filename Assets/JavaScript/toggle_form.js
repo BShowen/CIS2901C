@@ -1,6 +1,6 @@
 window.onload = ()=>{
   const show_form_button = document.querySelector('.show_form');
-  const form_container = document.querySelector('.new_customer_form');
+  const form_container = document.querySelector('.form_container');
   show_form_button.addEventListener('click', (e)=>{
     toggleForm(show_form_button, form_container);
   })

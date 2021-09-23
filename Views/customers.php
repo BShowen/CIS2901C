@@ -65,7 +65,7 @@ if($user_message){
     </table>
   </div>
 
-  <div class="new_customer_form">
+  <div class="new_customer_form form_container">
     <form class="form" action="/businessManager/Controllers/new_customer.php" method="POST">
       <h1 class="form_title">New customer</h1>
       <div class="form_controls">
