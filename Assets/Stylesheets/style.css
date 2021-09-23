@@ -59,10 +59,17 @@ table {
   text-align: center;
 }
 
+.table_row:hover {
+  background-color: lightgrey;
+  cursor: pointer;
+}
+
 .new_customer_form {
-  border: 1px solid red;
-  margin: 5px;
-  padding: 5px;
+  padding: 0;
+  height: 0px;
+  transition: height 0.5s;
+  transition-timing-function: ease;
+  overflow: hidden;
 }
 
 .new_customer_form .form {
@@ -72,16 +79,15 @@ table {
 }
 
 .new_customer_form .form .form_controls {
-  border: 1px solid red;
   margin: 5px;
   padding: 5px;
 }
 
-.new_customer_message {
+.user_message {
   height: 1.5em;
   text-align: center;
 }
 
-.new_customer_message .new_customer_message_text {  
+.user_message .user_message_text {  
   background-color: green;
 }

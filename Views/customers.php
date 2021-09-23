@@ -11,38 +11,44 @@ if($result[0]){
   $result = $result[1];
   while ($row = $result->fetch_assoc()) {
     extract($row);
-    $table_rows.="<tr>
-    <td>$first_name</td>
-    <td>$last_name</td>
-    <td>$street_address</td>
-    <td>$city</td>
-    <td>$state</td>
-    <td>$zip</td>
+    $table_rows.="
+    <tr class='table_row' id='$customer_id'>
+      <td class='first_name'>$first_name</td>
+      <td class='last_name'>$last_name</td>
+      <td class='street_address'>$street_address</td>
+      <td class='city'>$city</td>
+      <td class='state'>$state</td>
+      <td class='zip'>$zip</td>
+      <td class='action_buttons'>
+        <a class='delete_button' href='/businessManager/Controllers/delete_customer.php?customer_id=$customer_id'>Delete</a> | 
+        <a class='edit_button' data-id='$customer_id' href='#'>Edit</a>
+      </td>
     </tr>";
   }
 }
 
 // This section of code is used when the user is being redirected to this page and there is a status message in the session. 
-// This happens when the user uses the form on this page to create a new customer. The form is submitted, a database connection
-// and SQL statement is execute, this page is re-rendered with a status in the session. 
-$new_customer_status = False;
-if($_SESSION['NEW_CUSTOMER_CONTROLLER_RESPONSE']){
-  $new_customer_status = $_SESSION['NEW_CUSTOMER_CONTROLLER_RESPONSE'];
-  $_SESSION['NEW_CUSTOMER_CONTROLLER_RESPONSE'] = null;
+// This happens when the user uses the form on this page to create a new customer or deletes a customer. The form is submitted, a
+// database connection and SQL statement are executed, this page is re-rendered with a status in the session. 
+$user_message = isset($_SESSION['user_message']) ? $_SESSION['user_message'][0] : 0 ;
+
+if($user_message){
+  $message = $_SESSION['user_message'][1];
+  $_SESSION['user_message'] = null;
 }
 
 ?>
 <main>
-  <div class="new_customer_message">
-    <?php if($new_customer_status){ ?>
-      <h3 class="new_customer_message_text">Customer successfully added</h3>
+  <div class="user_message">
+    <?php if($user_message){ ?>
+      <h3 class="user_message_text"><?php echo $message ?></h3>
     <?php } ?>
   </div>
 
-  <div class="table">
-    <table>
-      <caption><h1>Customers</h1></caption>
-      <tbody>
+  <div class="customer_table_container">
+    <table class="table">
+      <caption class="table_title"><h1>Customers</h1></caption>
+      <thead>
         <tr>
           <th scope="col">First name</th>
           <th scope="col">Last name</th>
@@ -50,7 +56,10 @@ if($_SESSION['NEW_CUSTOMER_CONTROLLER_RESPONSE']){
           <th scope="col">City</th>
           <th scope="col">State</th>
           <th scope="col">Zip</th>
-        </tr>
+          <th scope="col">Action</th>
+        </tr> 
+      </thead>
+      <tbody>
         <?php echo $table_rows; ?>
       </tbody>
     </table>
@@ -82,6 +91,7 @@ if($_SESSION['NEW_CUSTOMER_CONTROLLER_RESPONSE']){
       </div>
     </form>
   </div>
+  <button class="show_form collapsed">New customer</button>
 </main>
 <?php 
 $page->render_footer();

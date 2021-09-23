@@ -12,7 +12,7 @@ $params["zip"] = intval($params["zip"]);
 
 $results = $db->execute_sql_statement($query, $params);
 
-$_SESSION['NEW_CUSTOMER_CONTROLLER_RESPONSE'] = $results[0];
+$_SESSION['user_message'] = [$results[0], "Customer successfully added"];
 Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/customers.php");
 
 // send a response back to the caller. Success for Failure. 

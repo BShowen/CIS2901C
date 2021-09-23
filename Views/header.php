@@ -1,8 +1,9 @@
 <?php 
   function document_title(){
-    $title = ucfirst(basename($_SERVER['SCRIPT_FILENAME'], '.php'));
+    $title = basename($_SERVER['SCRIPT_FILENAME'], '.php');
     return $title == 'Index' ? 'Dashboard' : $title ;
   } 
+  $title = document_title();
 ?>
 
 <!DOCTYPE html>
@@ -13,7 +14,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- <link rel="stylesheet" href="./../Assets/Stylesheets/css_reset.css"> -->
   <link rel="stylesheet" href="./../Assets/Stylesheets/style.css">
-  <title><?php echo document_title(); ?></title>
+  <script src=<?php echo "./../Assets/JavaScript/{$title}.js" ?> ></script>
+  <title><?php echo ucfirst($title); ?></title>
 </head>
 <body>
   <nav>
