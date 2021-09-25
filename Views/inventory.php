@@ -29,10 +29,10 @@ if($result[0]){
 // This section of code is used when the user is being redirected to this page and there is a status message in the session. 
 // This happens when the user uses the form on this page to create a new inventory item or deletes an inventory item. The form is submitted, a
 // database connection and SQL statement are executed, this page is re-rendered with a status in the session. 
-$user_message = isset($_SESSION['user_message']) ? $_SESSION['user_message'][0] : 0 ;
+$user_message = isset($_SESSION['user_message']);
 
 if($user_message){
-  $message = $_SESSION['user_message'][1];
+  $message = $_SESSION['user_message'];
   $_SESSION['user_message'] = null;
 }
 ?>
