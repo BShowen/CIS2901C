@@ -114,7 +114,6 @@ tr:hover {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-  border: 1px solid purple;
 }
 
 .form_container .form_controls .inputs input {

@@ -24,22 +24,26 @@ if($user_message){
   </div>
 
   <div class="form_container">
-    <div class="form_title">
-      <h1>Login</h1>
-    </div>
     <form action='/businessManager/Models/LoginHandler.php' method='POST'>
-      <div class="form_controls">
-        <div class="inputs">
+      <div class="form_title">
+        <h1>Login</h1>
+      </div>
+      <div class="grid_container">
+        <div class="grid_item_label">
           <label for='user_name'>Username</label>
+        </div>
+        <div class="grid_item_input">
           <input type='text' id='user_name' name='user_name'>
         </div>
         
-        <div class="inputs">
+        <div class="grid_item_label">
           <label for='password'>Password</label>
+        </div>
+         <div class="grid_item_input">
           <input type='password' id='password' name='password'>
         </div>
         
-        <div class="inputs">
+        <div class="grid_item_input">
           <button type="submit">Submit</button>
         </div>
       </div>
