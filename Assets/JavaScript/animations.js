@@ -53,9 +53,12 @@ function getStyle(element, style){
 }
 
 function tableAnimation(){
-  const tableRows = document.getElementsByTagName('tr');
-  if(tableRows.length > 0){
-    const lastRow = tableRows[tableRows.length - 1];
-    lastRow.style.backgroundColor = 'white';
+  const newRow = document.querySelector('.new_row');
+  if(newRow){
+    newRow.style.backgroundColor = "white";
+    setTimeout(()=>{
+      newRow.classList = null;
+      newRow.style.backgroundColor = null;
+    }, 2000)
   }
 }

@@ -19,7 +19,8 @@ $query = "SELECT
           concat(E.first_name, ' ', E.last_name) AS 'sales_person', 
           concat(C.first_name, ' ', C.last_name) AS customer, 
           S.sale_total, 
-          S.sale_date
+          S.sale_date,
+          S.sale_id
           FROM Sales AS S JOIN Customers AS C USING (customer_id)
           JOIN Employees AS E USING (employee_id)";
 
@@ -38,6 +39,10 @@ if($result[0]){
                     <td>$customer</td>
                     <td>$sale_total</td>
                     <td>$sale_date</td>
+                    <td class='action_buttons'>
+                        <a class='delete_button' href='/businessManager/Controllers/delete_sale.php?sale_id=$sale_id'>Delete</a> | 
+                        <a class='edit_button' data-id='$sale_id' href='#'>Edit</a>
+                    </td>
                   </tr>";
     }else{
       $table_rows.="<tr>
@@ -45,6 +50,10 @@ if($result[0]){
                       <td>$customer</td>
                       <td>$sale_total</td>
                       <td>$sale_date</td>
+                      <td class='action_buttons'>
+                        <a class='delete_button' href='/businessManager/Controllers/delete_sale.php?sale_id=$sale_id'>Delete</a> | 
+                        <a class='edit_button' data-id='$sale_id' href='#'>Edit</a>
+                      </td>
                     </tr>"; 
     }
   }
@@ -79,6 +88,7 @@ if($customer_results[0]){
           <th scope="col">Customer</th>
           <th scope="col">Sale total</th>
           <th scope="col">Sale date</th>
+          <th scope="col">Action</th>
         </tr>
         <?php echo $table_rows; ?>
       </tbody>

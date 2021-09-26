@@ -59,7 +59,7 @@ table {
   text-align: center;
 }
 
-.table_row:hover {
+tr:hover {
   background-color: lightgrey;
   cursor: pointer;
 }
