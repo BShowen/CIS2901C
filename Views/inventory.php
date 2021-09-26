@@ -62,33 +62,59 @@ if($user_message){
     </table>
   </div>
 
-  <div class="new_inventory_item_form form_container">
-    <form class="form" action="/businessManager/Controllers/new_inventory_item.php" method="POST">
-      <h1 class="form_title">New inventory item</h1>
-      <div class="form_controls">
-        <label for="item_name">Item name</label>
-        <input type="text" id="item_name" name="item_name">
+  <button class="show_form collapsed">New inventory item</button>
 
-        <label for="item_description">Item description</label>
-        <textarea id="item_description" name="item_description"></textarea>
-
-        <label for="in_stock">In Stock</label>
-        <select name="in_stock" id="in_stock">
-          <option value="1">Yes</option>
-          <option value="0">No</option>
-        </select>
-
-        <label for="stock_level">Stock level</label>
-        <input type="text" id="stock_level" name="stock_level">
-
-        <label for="price">Price</label>
-        <input type="text" id="price" name="price">
+  <div class="inventory_form form_container">
+    <form  action="/businessManager/Controllers/new_inventory_item.php" method="POST">
+      <div class="form_title">
+        <h1>New inventory item</h1>
+      </div>
+      <div class="grid_container">
         
-        <input type="submit">
+        <div class="grid_item_label">
+          <label for="item_name">Item name</label>
+        </div>
+        <div class="grid_item_input">
+          <input type="text" id="item_name" name="item_name">
+        </div>
+
+        <div class="grid_item_label">
+          <label for="item_description">Item description</label>
+        </div>
+        <div class="grid_item_input">
+          <textarea id="item_description" name="item_description"></textarea>
+        </div>
+
+        <div class="grid_item_label">
+          <label for="in_stock">In Stock</label>
+        </div>
+        <div class="grid_item_input">
+          <select name="in_stock" id="in_stock">
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+          </select>
+        </div>
+
+        <div class="grid_item_label">
+          <label for="stock_level">Stock level</label>
+        </div>
+        <div class="grid_item_input">
+          <input type="text" id="stock_level" name="stock_level">
+        </div>  
+
+        <div class="grid_item_label">
+          <label for="price">Price</label>
+        </div>
+        <div class="grid_item_input">
+          <input type="text" id="price" name="price">
+        </div>
+
+        <div class="grid_item_input">
+          <button type="submit">Submit</button>
+        </div>
       </div>
     </form>
   </div>
-  <button class="show_form collapsed">New inventory item</button>
 </main>
 <?php 
 $page->render_footer();

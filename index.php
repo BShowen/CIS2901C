@@ -28,7 +28,7 @@ if($user_message){
       <h1>Login</h1>
     </div>
     <form action='/businessManager/Models/LoginHandler.php' method='POST'>
-      <div class="input_container">
+      <div class="form_controls">
         <div class="inputs">
           <label for='user_name'>Username</label>
           <input type='text' id='user_name' name='user_name'>

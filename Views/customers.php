@@ -65,33 +65,62 @@ if($user_message){
     </table>
   </div>
 
-  <div class="new_customer_form form_container">
+  <button class="show_form collapsed">New customer</button>
+
+  <div class="customer_form form_container">
     <form class="form" action="/businessManager/Controllers/new_customer.php" method="POST">
-      <h1 class="form_title">New customer</h1>
-      <div class="form_controls">
-        <label for="first_name">First name</label>
-        <input type="text" id="first_name" name="first_name">
+      <div class="form_title">
+        <h1>New customer</h1>
+      </div>
+      <div class="grid_container">
+        <div class="grid_item_label">
+          <label for="first_name">First name</label>
+        </div>
+        <div class="grid_item_input">
+          <input type="text" id="first_name" name="first_name">
+        </div>
 
-        <label for="last_name">Last name</label>
-        <input type="text" id="last_name" name="last_name">
+        <div class="grid_item_label">
+          <label for="last_name">Last name</label>
+        </div>
+        <div class="grid_item_input">
+          <input type="text" id="last_name" name="last_name">
+        </div>
 
-        <label for="street_address">Street address</label>
-        <input type="text" id="street_address" name="street_address">
+        <div class="grid_item_label">
+          <label for="street_address">Street address</label>
+        </div>
+        <div class="grid_item_input">
+          <input type="text" id="street_address" name="street_address">
+        </div>
 
-        <label for="city">City</label>
-        <input type="text" id="city" name="city">
+        <div class="grid_item_label">
+          <label for="city">City</label>
+        </div>
+        <div class="grid_item_input">
+          <input type="text" id="city" name="city">
+        </div>
 
-        <label for="state">State</label>
-        <input type="text" id="state" name="state">
+        <div class="grid_item_label">
+          <label for="state">State</label>
+        </div>
+        <div class="grid_item_input">
+          <input type="text" id="state" name="state">
+        </div>
 
-        <label for="zip">Zip</label>
-        <input type="text" id="zip" name="zip">
+        <div class="grid_item_label">
+          <label for="zip">Zip</label>
+        </div>
+        <div class="grid_item_input">
+          <input type="text" id="zip" name="zip">
+        </div>
 
-        <input type="submit">
+        <div class="grid_item_input">
+          <input type="submit">
+        </div>
       </div>
     </form>
   </div>
-  <button class="show_form collapsed">New customer</button>
 </main>
 <?php 
 $page->render_footer();
