@@ -4,39 +4,55 @@ $page = new Page();
 
 $db = new Database();
 
-$query = "SELECT * FROM Customers";
-$result = $db->execute_sql_statement($query);
-$table_rows = "";
-if($result[0]){
-  $result = $result[1];
-  while ($row = $result->fetch_assoc()) {
-    extract($row);
-    $table_rows.="
-    <tr class='table_row' id='$customer_id'>
-      <td class='first_name'>$first_name</td>
-      <td class='last_name'>$last_name</td>
-      <td class='street_address'>$street_address</td>
-      <td class='city'>$city</td>
-      <td class='state'>$state</td>
-      <td class='zip'>$zip</td>
-      <td class='action_buttons'>
-        <a class='delete_button' href='/businessManager/Controllers/delete_customer.php?customer_id=$customer_id'>Delete</a> | 
-        <a class='edit_button' data-id='$customer_id' href='#'>Edit</a>
-      </td>
-    </tr>";
-  }
-}
-
 // This section of code is used when the user is being redirected to this page and there is a status message in the session. 
 // This happens when the user uses the form on this page to create a new customer or deletes a customer. The form is submitted, a
 // database connection and SQL statement are executed, this page is re-rendered with a status in the session. 
 $user_message = isset($_SESSION['user_message']);
-
+$message = '';
 if($user_message){
   $message = $_SESSION['user_message'];
   $_SESSION['user_message'] = null;
 }
 
+$query = "SELECT * FROM Customers";
+$result = $db->execute_sql_statement($query);
+$table_rows = "";
+if($result[0]){
+  $result = $result[1];
+  $last_row = $result->num_rows;
+  $current_row = 0;
+  while ($row = $result->fetch_assoc()) {
+    $current_row++;
+    extract($row);
+    if(str_contains($message, 'added') && ($current_row == $last_row)){
+      $table_rows.="<tr class='new_row'>
+                      <td class='first_name'>$first_name</td>
+                      <td class='last_name'>$last_name</td>
+                      <td class='street_address'>$street_address</td>
+                      <td class='city'>$city</td>
+                      <td class='state'>$state</td>
+                      <td class='zip'>$zip</td>
+                      <td class='action_buttons'>
+                        <a class='delete_button' href='/businessManager/Controllers/delete_customer.php?customer_id=$customer_id'>Delete</a> | 
+                        <a class='edit_button' data-id='$customer_id' href='#'>Edit</a>
+                      </td>
+                    </tr>";
+    }else{
+      $table_rows.="<tr>
+                      <td class='first_name'>$first_name</td>
+                      <td class='last_name'>$last_name</td>
+                      <td class='street_address'>$street_address</td>
+                      <td class='city'>$city</td>
+                      <td class='state'>$state</td>
+                      <td class='zip'>$zip</td>
+                      <td class='action_buttons'>
+                        <a class='delete_button' href='/businessManager/Controllers/delete_customer.php?customer_id=$customer_id'>Delete</a> | 
+                        <a class='edit_button' data-id='$customer_id' href='#'>Edit</a>
+                      </td>
+                    </tr>";
+    } 
+  }
+}
 ?>
 <main>
   <div class="user_message">

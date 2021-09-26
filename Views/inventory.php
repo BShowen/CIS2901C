@@ -4,36 +4,52 @@ $page = new Page();
 
 $db = new Database();
 
+// This section of code is used when the user is being redirected to this page and there is a status message in the session. 
+// This happens when the user uses the form on this page to create a new inventory item or deletes an inventory item. The form is submitted, a
+// database connection and SQL statement are executed, this page is re-rendered with a status in the session. 
+$user_message = isset($_SESSION['user_message']);
+$message = '';
+if($user_message){
+  $message = $_SESSION['user_message'];
+  $_SESSION['user_message'] = null;
+}
+
 $query = "SELECT * FROM Inventory_items";
 $result = $db->execute_sql_statement($query);
 $table_rows = "";
 if($result[0]){
   $result = $result[1];
+  $last_row = $result->num_rows;
+  $current_row = 0;
   while ($row = $result->fetch_assoc()) {
+    $current_row++;
     extract($row);
-    $table_rows.=
-    "<tr>
-      <td class='item_name'>$item_name</td>
-      <td class='item_description'>$item_description</td>
-      <td class='in_stock'>$in_stock</td>
-      <td class='stock_level'>$stock_level</td>
-      <td class='price'>$price</td>
-      <td class='action_buttons'>
-        <a class='delete_button' href='/businessManager/Controllers/delete_inventory_item.php?item_id=$item_id'>Delete</a> |
-        <a class='edit_button' href='#'>Edit</a>
-      </td>
-    </tr>";
+    if(str_contains($message, 'added') && ($current_row == $last_row)){
+      $table_rows.= "<tr class='new_row'>
+                      <td class='item_name'>$item_name</td>
+                      <td class='item_description'>$item_description</td>
+                      <td class='in_stock'>$in_stock</td>
+                      <td class='stock_level'>$stock_level</td>
+                      <td class='price'>$price</td>
+                      <td class='action_buttons'>
+                        <a class='delete_button' href='/businessManager/Controllers/delete_inventory_item.php?item_id=$item_id'>Delete</a> |
+                        <a class='edit_button' href='#'>Edit</a>
+                      </td>
+                    </tr>";
+    }else{
+      $table_rows.= "<tr>
+                      <td class='item_name'>$item_name</td>
+                      <td class='item_description'>$item_description</td>
+                      <td class='in_stock'>$in_stock</td>
+                      <td class='stock_level'>$stock_level</td>
+                      <td class='price'>$price</td>
+                      <td class='action_buttons'>
+                        <a class='delete_button' href='/businessManager/Controllers/delete_inventory_item.php?item_id=$item_id'>Delete</a> |
+                        <a class='edit_button' href='#'>Edit</a>
+                      </td>
+                    </tr>";
+    }
   }
-}
-
-// This section of code is used when the user is being redirected to this page and there is a status message in the session. 
-// This happens when the user uses the form on this page to create a new inventory item or deletes an inventory item. The form is submitted, a
-// database connection and SQL statement are executed, this page is re-rendered with a status in the session. 
-$user_message = isset($_SESSION['user_message']);
-
-if($user_message){
-  $message = $_SESSION['user_message'];
-  $_SESSION['user_message'] = null;
 }
 ?>
 <main>

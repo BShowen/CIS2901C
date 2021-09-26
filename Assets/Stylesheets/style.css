@@ -163,3 +163,8 @@ table {
 .inventory_form .grid_container .grid_item_input{
   grid-column: 2/13;
 }
+
+.new_row {
+  background-color: #d4edda;
+  transition: background-color 2000ms;
+}

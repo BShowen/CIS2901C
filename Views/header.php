@@ -14,7 +14,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- <link rel="stylesheet" href="./../Assets/Stylesheets/css_reset.css"> -->
   <link rel="stylesheet" href="/businessManager/Assets/Stylesheets/style.css">
-  <script src="/businessManager/Assets/JavaScript/toggle_form.js"></script>
+  <script src="/businessManager/Assets/JavaScript/animations.js"></script>
   <title><?php echo ucfirst($title); ?></title>
 </head>
 <body>
