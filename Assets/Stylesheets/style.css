@@ -82,21 +82,23 @@ table {
 }
 
 .form_container{
+  display: flex;
+  justify-content: center;
+  width: max-content;
+  height: max-content;
+  transition: height 1s;
+  margin: 10px auto;
+  padding: 10px;
   border: 1px solid black;
   border-radius: 5px;
-  width: 20%;
-  margin: 10px auto;
-  height: max-content;
-  padding: 10px;
   overflow: hidden;
-  transition: height 1s;
 }
 
 .form_title {
   text-align: center;
   border-bottom: 1px solid black;
   margin: 5px;
-  padding: 10px 0;
+  padding: 10px;
 }
 
 .form_container .form_controls {
@@ -133,34 +135,24 @@ table {
   height: 30px;
 }
 
-.inventory_form {
-  display: flex;
-  justify-content: center;
-  width: max-content;
-  margin-top: 10px;
-  padding: 10px;
-  border: 1px solid black;
-  border-radius: 10px;
-}
-
-.inventory_form .grid_container {
+form .grid_container {
   display: grid;
   grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto ;
 }
 
-.inventory_form .grid_container .grid_item_label, 
-.inventory_form .grid_container .grid_item_input {
+form .grid_container .grid_item_label, 
+form .grid_container .grid_item_input {
   display: flex;
   align-items: center;
 }
 
-.inventory_form .grid_container .grid_item_label{
+form .grid_container .grid_item_label{
   justify-content: end;
   grid-column: 1/2;
   padding: 5px;
 }
 
-.inventory_form .grid_container .grid_item_input{
+form .grid_container .grid_item_input{
   grid-column: 2/13;
 }
 

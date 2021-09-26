@@ -84,7 +84,7 @@ if($result[0]){
   <button class="show_form collapsed">New customer</button>
 
   <div class="customer_form form_container">
-    <form class="form" action="/businessManager/Controllers/new_customer.php" method="POST">
+    <form action="/businessManager/Controllers/new_customer.php" method="POST">
       <div class="form_title">
         <h1>New customer</h1>
       </div>
