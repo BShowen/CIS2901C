@@ -63,12 +63,12 @@ if($result[0]){
 // This list is used in the form to allow the user to pick out the customer when they're creating a new sale. 
 $customer_query = "SELECT customer_id, first_name, last_name FROM Customers";
 $customer_results = $db->execute_sql_statement($customer_query);
-$selection_list = "";
+$customer_selection_list = "";
 if($customer_results[0]){
   $result = $customer_results[1];
   while ($row = $result->fetch_assoc()){
     extract($row);
-    $selection_list .= "<option value=$customer_id>$first_name $last_name</option>";
+    $customer_selection_list .= "<option value=$customer_id>$first_name $last_name</option>";
   }
 }
 ?>
@@ -108,7 +108,7 @@ if($customer_results[0]){
         </div>
         <div class="grid_item_input">
           <select name="customer_id" id="customer">
-            <?php echo $selection_list; ?>
+            <?php echo $customer_selection_list; ?>
           </select>
         </div>
 

@@ -6,7 +6,6 @@
   $query = 'DELETE FROM Customers WHERE customer_id = ?';
   $params = $_GET;
   $params['customer_id'] = intval($params['customer_id']);
-  var_dump($params);
 
   $results = $db->execute_sql_statement($query, $params);
 
