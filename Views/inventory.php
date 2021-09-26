@@ -24,6 +24,7 @@ if($result[0]){
   while ($row = $result->fetch_assoc()) {
     $current_row++;
     extract($row);
+    $in_stock = $in_stock ? "True" : "False";
     if(str_contains($message, 'added') && ($current_row == $last_row)){
       $table_rows.= "<tr class='new_row'>
                       <td class='item_name'>$item_name</td>
@@ -115,14 +116,14 @@ if($result[0]){
           <label for="stock_level">Stock level</label>
         </div>
         <div class="grid_item_input">
-          <input type="text" id="stock_level" name="stock_level">
+          <input type="number" id="stock_level" name="stock_level" min="0" step="1">
         </div>  
 
         <div class="grid_item_label">
           <label for="price">Price</label>
         </div>
         <div class="grid_item_input">
-          <input type="text" id="price" name="price">
+          <input type="number" id="price" name="price" min="0" step=".01">
         </div>
 
         <div class="grid_item_input">
