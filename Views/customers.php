@@ -61,8 +61,8 @@ if($result[0]){
     <?php } ?>
   </div>
 
-  <div class="customer_table_container">
-    <table class="table">
+  <div class="table_container">
+    <table>
       <caption class="table_title"><h1>Customers</h1></caption>
       <thead>
         <tr>
@@ -81,9 +81,11 @@ if($result[0]){
     </table>
   </div>
 
-  <button class="show_form collapsed">New customer</button>
+  <div class="show_form_button">
+    <button class="show_form collapsed">New customer</button>
+  </div>
 
-  <div class="customer_form form_container">
+  <div class="form_container">
     <form action="/businessManager/Controllers/new_customer.php" method="POST">
       <div class="form_title">
         <h1>New customer</h1>

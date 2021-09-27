@@ -8,9 +8,7 @@ function formAnimation(){
   const formContainer = document.querySelector('.form_container');
   if(showFormButton && formContainer){
     const styles = {
-      padding: getStyle(formContainer, 'padding'), 
       height: getStyle(formContainer, 'height'), 
-      border: getStyle(formContainer, 'border'),
       buttonText: showFormButton.innerText,
     };
   
@@ -29,20 +27,12 @@ function toggleForm(button, container, styles = {}){
   
   if(is_collapsed){
     container.style.height = styles.height;
-    container.style.border = styles.border;
-    container.style.padding = styles.padding;
     button.innerText = 'Cancel';
     button.className = 'show_form expanded';
   }else{
     container.style.height = '0px';
     button.innerText = styles.buttonText;
     button.className = 'show_form collapsed';
-    setTimeout(()=>{
-      container.style.padding = '0px';
-    }, 450)
-    setTimeout(()=>{
-      container.style.border = 'none';
-    }, 900);
   }
 
 }

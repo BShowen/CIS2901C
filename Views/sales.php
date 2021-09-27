@@ -79,9 +79,9 @@ if($customer_results[0]){
     <?php } ?>
   </div>
 
-  <div class="table">
+  <div class="table_container">
     <table>
-      <caption><h1>Sales</h1></caption>
+      <caption class="table_title"><h1>Sales</h1></caption>
       <tbody>
         <tr>
           <th scope="col">Sales person</th>
@@ -95,9 +95,11 @@ if($customer_results[0]){
     </table>
   </div>
 
-  <button class="show_form collapsed">New Sale</button>
+  <div class="show_form_button">
+    <button class="show_form collapsed">New Sale</button>
+  </div>
 
-  <div class="sale_form form_container">
+  <div class="form_container">
     <form action="/businessManager/Controllers/new_sale.php" method="POST">
       <div class="form_title">
         <h1>New Sale</h1>

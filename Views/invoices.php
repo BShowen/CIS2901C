@@ -100,9 +100,9 @@ if($result[0]){
     <?php } ?>
   </div>
 
-  <div class="table">
+  <div class="table_container">
     <table>
-      <caption><h1>Invoices</h1></caption>
+    <caption class="table_title"><h1>Invoices</h1></caption>
       <tbody>
         <tr>
           <th scope="col">Customer name</th>
@@ -117,7 +117,9 @@ if($result[0]){
     </table>
   </div>
 
-  <button class="show_form collapsed">New invoice</button>
+  <div class="show_form_button">
+    <button class="show_form collapsed">New invoice</button>
+  </div>
 
   <div class="form_container">
     <form action="/businessManager/Controllers/new_invoice.php" method="POST">

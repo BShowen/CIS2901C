@@ -21,9 +21,9 @@ if($result[0]){
 }
 ?>
 <main>
-  <div class="table">
+  <div class="table_container">
     <table>
-      <caption><h1>Employees</h1></caption>
+      <caption class="table_title"><h1>Employees</h1></caption>
       <tbody>
         <tr>
           <th scope="col">First name</th>

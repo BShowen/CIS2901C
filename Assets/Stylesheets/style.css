@@ -41,29 +41,6 @@ main {
   padding: 30px 100px;
 }
 
-table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-}
-
-table th, td {
-  padding: 10px;
-}
-
-table th {
-  background-color: lightgray;
-}
-
-table {
-  width: 100%;
-  text-align: center;
-}
-
-tr:hover {
-  background-color: lightgrey;
-  cursor: pointer;
-}
-
 .user_message {
   height: 3.5em;
   text-align: center;
@@ -81,17 +58,57 @@ tr:hover {
   justify-content: center;
 }
 
+div.table_container{
+  width: 100%;
+  text-align: center;
+}
+
+caption.table_title{
+  padding: 5px 0;
+  border-top: 1px solid black;
+  border-left: 1px solid black; 
+  border-right: 1px solid black;
+}
+
+table {
+  width: inherit;
+}
+
+table th {
+  background-color: lightgray;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 10px;
+}
+
+tr:hover {
+  background-color: lightgrey;
+  cursor: pointer;
+}
+
+div.show_form_button{
+  padding: 15px;
+  width: 100%;
+}
+
+div.show_form_button button {}
+
 .form_container{
   display: flex;
   justify-content: center;
-  width: max-content;
+  width: 100%;
   height: max-content;
   transition: height 1s;
-  margin: 10px auto;
-  padding: 10px;
+  overflow: hidden;
+}
+
+div.form_container form {
   border: 1px solid black;
   border-radius: 5px;
-  overflow: hidden;
+  padding: 10px
 }
 
 .form_title {
@@ -99,39 +116,6 @@ tr:hover {
   border-bottom: 1px solid black;
   margin: 5px;
   padding: 10px;
-}
-
-.form_container .form_controls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 5px;
-}
-
-.form_container .form_controls .inputs {
-  width: 100%;
-  margin: 5px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-}
-
-.form_container .form_controls .inputs input {
-  border: 1px solid black;
-  border-radius: 5px;
-  width: 75%;
-  height: 30px;
-  padding: 4px;
-} 
-
-.form_container .form_controls .inputs label {
-  display: flex;
-  align-items: center;
-}
-
-.form_container .form_controls .inputs button {
-  width: 60px;
-  height: 30px;
 }
 
 form .grid_container {
