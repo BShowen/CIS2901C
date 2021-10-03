@@ -34,7 +34,7 @@ if($result[0]){
     $current_row++;
     extract($row);
     if(str_contains($message, 'added') && ($current_row == $last_row)){
-      $table_rows.="<tr class='new_row'>
+      $table_rows.="<tr class='new_row clickable' data-id='$sale_id'>
                     <td>$sales_person</td>
                     <td>$customer</td>
                     <td>$sale_total</td>
@@ -45,7 +45,7 @@ if($result[0]){
                     </td>
                   </tr>";
     }else{
-      $table_rows.="<tr>
+      $table_rows.="<tr class='clickable' data-id='$sale_id'>
                       <td>$sales_person</td>
                       <td>$customer</td>
                       <td>$sale_total</td>
@@ -82,7 +82,7 @@ if($customer_results[0]){
   <div class="table_container">
     <table>
       <caption class="table_title"><h1>Sales</h1></caption>
-      <tbody>
+      <thead>
         <tr>
           <th scope="col">Sales person</th>
           <th scope="col">Customer</th>
@@ -90,6 +90,8 @@ if($customer_results[0]){
           <th scope="col">Sale date</th>
           <th scope="col">Action</th>
         </tr>
+      </thead>
+      <tbody>
         <?php echo $table_rows; ?>
       </tbody>
     </table>

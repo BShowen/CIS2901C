@@ -69,6 +69,19 @@ class Database{
     return $results;
   }
 
+  // This function queries the database and returns true or false depending if the row exists. 
+  // Call this function by passing in an associative array and table name. 
+  // Here is an example function call to see if the "username" column of the "Employees" table contains a username "FooBar" 
+  // $user_exists = exists(['user_name'=>'FooBar'], 'Employees');
+  public function exists($param, $table){
+    $param_name = array_keys($param)[0];
+    $query = "SELECT EXISTS(SELECT * FROM $table WHERE $param_name = ?) AS 'exists' ";
+    $results = $this->execute_sql_statement($query,$param);
+    $result = $results[1];
+    $row = $result->fetch_assoc();
+    return $row['exists'] == 1;
+  }
+
 
   // This function ia called by $this->execute_sql_statement. 
   // The caller sends the sql parameters to this function in order for them to be 

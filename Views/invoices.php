@@ -103,7 +103,7 @@ if($result[0]){
   <div class="table_container">
     <table>
     <caption class="table_title"><h1>Invoices</h1></caption>
-      <tbody>
+      <thead>
         <tr>
           <th scope="col">Customer name</th>
           <th scope="col">Sent date</th>
@@ -112,6 +112,8 @@ if($result[0]){
           <th scope="col">Web link</th>
           <th scope="col">Action</th>
         </tr>
+      </thead>
+      <tbody>
         <?php echo $table_rows; ?>
       </tbody>
     </table>

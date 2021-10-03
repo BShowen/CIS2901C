@@ -25,7 +25,7 @@ if($result[0]){
     $current_row++;
     extract($row);
     if(str_contains($message, 'added') && ($current_row == $last_row)){
-      $table_rows.="<tr class='new_row'>
+      $table_rows.="<tr class='new_row clickable' data-id='$customer_id'>
                       <td class='first_name'>$first_name</td>
                       <td class='last_name'>$last_name</td>
                       <td class='street_address'>$street_address</td>
@@ -38,7 +38,7 @@ if($result[0]){
                       </td>
                     </tr>";
     }else{
-      $table_rows.="<tr>
+      $table_rows.="<tr class='clickable' data-id='$customer_id'>
                       <td class='first_name'>$first_name</td>
                       <td class='last_name'>$last_name</td>
                       <td class='street_address'>$street_address</td>
@@ -47,7 +47,7 @@ if($result[0]){
                       <td class='zip'>$zip</td>
                       <td class='action_buttons'>
                         <a class='delete_button' href='/businessManager/Controllers/delete_customer.php?customer_id=$customer_id'>Delete</a> | 
-                        <a class='edit_button' data-id='$customer_id' href='#'>Edit</a>
+                        <a class='edit_button' data-id='$customer_id' href='/businessManager'>Edit</a>
                       </td>
                     </tr>";
     } 
@@ -65,7 +65,7 @@ if($result[0]){
     <table>
       <caption class="table_title"><h1>Customers</h1></caption>
       <thead>
-        <tr>
+        <tr class="no-hover">
           <th scope="col">First name</th>
           <th scope="col">Last name</th>
           <th scope="col">Street Address</th>

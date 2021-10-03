@@ -24,13 +24,15 @@ if($result[0]){
   <div class="table_container">
     <table>
       <caption class="table_title"><h1>Employees</h1></caption>
-      <tbody>
+      <thead>
         <tr>
           <th scope="col">First name</th>
           <th scope="col">Last name</th>
           <th scope="col">User name</th>
           <th scope="col">Email address</th>
         </tr>
+      </thead>
+      <tbody>
         <?php echo $table_rows; ?>
       </tbody>
     </table>

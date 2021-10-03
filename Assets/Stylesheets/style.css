@@ -4,6 +4,10 @@
   padding: 0;
 }
 
+:root {
+  --table-row-height: 3rem;
+}
+
 html {
   height: 100vh;
 }
@@ -37,56 +41,72 @@ nav ul li {
 
 main {
   margin-left: 250px;
+  margin-top: 5.0em;
   height: 100vh;
   padding: 30px 100px;
 }
 
 .user_message {
-  height: 3.5em;
+  height: min-content;
   text-align: center;
   border-radius: 1em;
   overflow: hidden;
+  background-color: #d4edda;
+  position: absolute;
+  top: 1.5em;
+  right: 100px;
+  left: 350px;
 }
 
 .user_message .user_message_text {  
-  background-color: #d4edda;
   border-color: #c3e6cb;
   color: #155724;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 15px 15px;
+}
+
+.login_message{
+  left: 100px;
 }
 
 div.table_container{
   width: 100%;
-  text-align: center;
+  padding: 10px 5px;
 }
 
 caption.table_title{
-  padding: 5px 0;
-  border-top: 1px solid black;
-  border-left: 1px solid black; 
-  border-right: 1px solid black;
+  padding: 20px 0;
 }
 
 table {
-  width: inherit;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0px 5px 5px grey; 
+  overflow: hidden;
+  border-collapse: collapse;
 }
 
-table th {
-  background-color: lightgray;
+thead {
+  background-color: #33b5e5;
+  color: #fff;
 }
 
 table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-  padding: 10px;
+  padding: 10px 0 ;
+  height: var(--table-row-height);
 }
 
 tr:hover {
   background-color: lightgrey;
   cursor: pointer;
+}
+
+tr.no-hover:hover{
+  background-color: inherit;
+  cursor: default;
 }
 
 div.show_form_button{
@@ -106,9 +126,11 @@ div.show_form_button button {}
 }
 
 div.form_container form {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   border-radius: 5px;
-  padding: 10px
+  padding: 10px;
+  margin: 5px 0;
+  box-shadow: 0px 0px 2px grey;
 }
 
 .form_title {
@@ -142,4 +164,11 @@ form .grid_container .grid_item_input{
 .new_row {
   background-color: #d4edda;
   transition: background-color 2000ms;
+}
+
+.delete_button, .edit_button{ */
+  /* height: var(--table-row-height); */
+}
+.delete_button:hover, .edit_button:hover{
+  color: white;
 }
