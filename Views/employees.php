@@ -25,7 +25,7 @@ if($result[0]){
     <table>
       <caption class="table_title"><h1>Employees</h1></caption>
       <thead>
-        <tr>
+        <tr class="no-hover">
           <th scope="col">First name</th>
           <th scope="col">Last name</th>
           <th scope="col">User name</th>

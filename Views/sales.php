@@ -34,28 +34,19 @@ if($result[0]){
     $current_row++;
     extract($row);
     if(str_contains($message, 'added') && ($current_row == $last_row)){
-      $table_rows.="<tr class='new_row clickable' data-id='$sale_id'>
-                    <td>$sales_person</td>
-                    <td>$customer</td>
-                    <td>$sale_total</td>
-                    <td>$sale_date</td>
-                    <td class='action_buttons'>
-                        <a class='delete_button' href='/businessManager/Controllers/delete_sale.php?sale_id=$sale_id'>Delete</a> | 
-                        <a class='edit_button' data-id='$sale_id' href='#'>Edit</a>
-                    </td>
-                  </tr>";
+      $table_rows.="<tr class='new_row clickable' data-href='/businessManager/Views/sale.php?sale_id=$sale_id'>";
     }else{
-      $table_rows.="<tr class='clickable' data-id='$sale_id'>
-                      <td>$sales_person</td>
-                      <td>$customer</td>
-                      <td>$sale_total</td>
-                      <td>$sale_date</td>
-                      <td class='action_buttons'>
-                        <a class='delete_button' href='/businessManager/Controllers/delete_sale.php?sale_id=$sale_id'>Delete</a> | 
-                        <a class='edit_button' data-id='$sale_id' href='#'>Edit</a>
-                      </td>
-                    </tr>"; 
+      $table_rows.="<tr class='clickable' data-href='/businessManager/Views/sale.php?sale_id=$sale_id'>";
     }
+    $table_rows.="<td>$sales_person</td>
+      <td>$customer</td>
+      <td>$sale_total</td>
+      <td>$sale_date</td>
+      <td class='action_buttons'>
+        <a class='delete_button' href='/businessManager/Controllers/delete_sale.php?sale_id=$sale_id'>Delete</a> | 
+        <a class='edit_button' data-id='$sale_id' href='#'>Edit</a>
+      </td>
+    </tr>"; 
   }
 }
 
@@ -83,7 +74,7 @@ if($customer_results[0]){
     <table>
       <caption class="table_title"><h1>Sales</h1></caption>
       <thead>
-        <tr>
+        <tr class="no-hover">
           <th scope="col">Sales person</th>
           <th scope="col">Customer</th>
           <th scope="col">Sale total</th>

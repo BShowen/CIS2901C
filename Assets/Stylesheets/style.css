@@ -14,6 +14,7 @@ html {
 
 body {
   min-height: 100vh;
+  background-color: #F4F7FA;
 }
 
 nav {
@@ -140,24 +141,24 @@ div.form_container form {
   padding: 10px;
 }
 
-form .grid_container {
+.grid_container {
   display: grid;
   grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto ;
 }
 
-form .grid_container .grid_item_label, 
-form .grid_container .grid_item_input {
+.grid_container .grid_item_label, 
+.grid_container .grid_item_input {
   display: flex;
   align-items: center;
 }
 
-form .grid_container .grid_item_label{
+.grid_container .grid_item_label{
   justify-content: end;
   grid-column: 1/2;
   padding: 5px;
 }
 
-form .grid_container .grid_item_input{
+.grid_container .grid_item_input{
   grid-column: 2/13;
 }
 
@@ -166,9 +167,34 @@ form .grid_container .grid_item_input{
   transition: background-color 2000ms;
 }
 
-.delete_button, .edit_button{ */
+.delete_button, .edit_button{ 
   /* height: var(--table-row-height); */
 }
 .delete_button:hover, .edit_button:hover{
   color: white;
+}
+
+.card, form{
+  background-color: #FFFFFF;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin: 50px 0;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, 
+              rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+}
+
+.card_title{
+  padding: 5px 5px;
+}
+
+.card .card_line{
+  border: 2px solid #EEF1F5;
+}
+
+.card .card_details{
+  padding: 5px 5px;
+}
+
+.sales_invoice{
+  border: 1px solid red !important;
 }

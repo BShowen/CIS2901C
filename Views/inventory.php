@@ -26,30 +26,20 @@ if($result[0]){
     extract($row);
     $in_stock = $in_stock ? "True" : "False";
     if(str_contains($message, 'added') && ($current_row == $last_row)){
-      $table_rows.= "<tr class='new_row'>
-                      <td class='item_name'>$item_name</td>
-                      <td class='item_description'>$item_description</td>
-                      <td class='in_stock'>$in_stock</td>
-                      <td class='stock_level'>$stock_level</td>
-                      <td class='price'>$price</td>
-                      <td class='action_buttons'>
-                        <a class='delete_button' href='/businessManager/Controllers/delete_inventory_item.php?item_id=$item_id'>Delete</a> |
-                        <a class='edit_button' href='#'>Edit</a>
-                      </td>
-                    </tr>";
+      $table_rows.= "<tr class='new_row'>";
     }else{
-      $table_rows.= "<tr>
-                      <td class='item_name'>$item_name</td>
-                      <td class='item_description'>$item_description</td>
-                      <td class='in_stock'>$in_stock</td>
-                      <td class='stock_level'>$stock_level</td>
-                      <td class='price'>$price</td>
-                      <td class='action_buttons'>
-                        <a class='delete_button' href='/businessManager/Controllers/delete_inventory_item.php?item_id=$item_id'>Delete</a> |
-                        <a class='edit_button' href='#'>Edit</a>
-                      </td>
-                    </tr>";
+      $table_rows.= "<tr>";
     }
+    $table_rows.="  <td class='item_name'>$item_name</td>
+      <td class='item_description'>$item_description</td>
+      <td class='in_stock'>$in_stock</td>
+      <td class='stock_level'>$stock_level</td>
+      <td class='price'>$price</td>
+      <td class='action_buttons'>
+        <a class='delete_button' href='/businessManager/Controllers/delete_inventory_item.php?item_id=$item_id'>Delete</a> |
+        <a class='edit_button' href='#'>Edit</a>
+      </td>
+    </tr>";
   }
 }
 ?>
@@ -64,7 +54,7 @@ if($result[0]){
     <table>
       <caption class="table_title"><h1>Inventory</h1></caption>
       <thead>
-        <tr>
+        <tr class="no-hover">
           <th scope="col">Item name</th>
           <th scope="col">Item Description</th>
           <th scope="col">In stock</th>

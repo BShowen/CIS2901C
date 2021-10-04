@@ -92,19 +92,41 @@ class Customer {
 
   // This function returns a 2 dimensional array containing the sales for the current customer. 
   // This function will return a populated array or an empty array if the customer doesn't have sales. 
-  // Example return: [ ['sale_id' =>1, 'sale_total' => 100.00, 'sale_date => '08-08-2021'], ['sale_id' => 2, 'sale_total' => 33.45, 'sale_date' => '10-01-2021'] ];
   public function get_sales(){
-    $query = "SELECT sale_id, sale_total, sale_date FROM Sales WHERE customer_id = ?";
+    $query = "SELECT 
+      concat(E.first_name, ' ', E.last_name) AS 'sales_person',  
+      S.sale_id,
+      S.sale_total, 
+      S.sale_date
+      FROM Sales AS S JOIN Customers AS C USING (customer_id)
+      JOIN Employees AS E USING (employee_id)
+      WHERE customer_id = ?";
     $result = $this->db->execute_sql_statement($query, ['customer_id' => $this->customer_id]);
     $sales = [];
     if($result[0]){
       $result = $result[1];
       while($row = $result->fetch_assoc()){
         extract($row);
-        array_push($sales, ['sale_id' => $sale_id, 'sale_total' => $sale_total, 'sale_date' => $sale_date]);
+        array_push($sales, ['sale_id' => $sale_id, 'sales_person' => $sales_person, 'sale_total' => $sale_total, 'sale_date' => $sale_date]);
       }
     }
     return $sales;
   }
+
+  public function get_invoices_for_sale($sale_id){
+    $query = "SELECT invoice_id, sent_date, due_date, total, web_link FROM Invoices WHERE sale_id = ?";
+    $param = ['sale_id' => $sale_id];
+    $result = $this->db->execute_sql_statement($query, $param);
+    $invoices = [];
+    if($result[0]){
+      $result = $result[1];
+      while($invoice = $result->fetch_assoc()){
+        extract($invoice);
+        array_push($invoices, ['invoice_id'=>$invoice_id, 'sent_date'=>$sent_date,'due_date'=>$due_date, 'total'=>$total, 'web_link'=>$web_link]);
+      }
+    }
+    return $invoices;
+  }
+
 }
 ?>

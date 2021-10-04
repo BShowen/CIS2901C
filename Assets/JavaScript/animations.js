@@ -2,7 +2,6 @@ window.onload = ()=>{
   formAnimation();
   tableAnimation();
   clickableTableRows();
-  disableFields();
 }
 
 function formAnimation(){
@@ -64,20 +63,8 @@ function clickableTableRows(){
   clickableRows.forEach((row)=>{
     row.addEventListener('click', (event)=>{
       const host = window.location.origin; //get the host name. For example "https://localHost:8080"
-      const newPathName = `/businessManager/Views/${getNewPath()}.php?id=${row.dataset.id}`; //create a redirect link. 
+      const newPathName = row.dataset.href //get the redirect link. 
       window.location.href = host + newPathName; //redirect the user. 
     });
   });
-}
-
-// This function is used by clickableTableRows(). This functions returns a string of the current location. 
-// For example, if the user is on the "customers" page then this function returns "customer". Or, if the user is on the 
-// "invoices" page, then this function returns "invoice". 
-function getNewPath(){
-  const path = window.location.pathname;
-  return path.slice(path.lastIndexOf("/") + 1, path.lastIndexOf(".") - 1);
-}
-
-function disableFields(){
-  const saleField = document.querySelector('#sale');
 }

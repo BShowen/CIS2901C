@@ -52,7 +52,7 @@ foreach($result as $row){
     <table>
       <caption class="table_title"><h1>Invoices</h1></caption>
       <thead>
-        <tr>
+        <tr class="no-hover">
           <th scope="col">Customer name</th>
           <th scope="col">Sent date</th>
           <th scope="col">Due date</th>

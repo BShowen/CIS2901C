@@ -25,32 +25,21 @@ if($result[0]){
     $current_row++;
     extract($row);
     if(str_contains($message, 'added') && ($current_row == $last_row)){
-      $table_rows.="<tr class='new_row clickable' data-id='$customer_id'>
-                      <td class='first_name'>$first_name</td>
-                      <td class='last_name'>$last_name</td>
-                      <td class='street_address'>$street_address</td>
-                      <td class='city'>$city</td>
-                      <td class='state'>$state</td>
-                      <td class='zip'>$zip</td>
-                      <td class='action_buttons'>
-                        <a class='delete_button' href='/businessManager/Controllers/delete_customer.php?customer_id=$customer_id'>Delete</a> | 
-                        <a class='edit_button' data-id='$customer_id' href='#'>Edit</a>
-                      </td>
-                    </tr>";
+      $table_rows.="<tr class='new_row clickable' data-href='/businessManager/Views/customer.php?customer_id=$customer_id'>";
     }else{
-      $table_rows.="<tr class='clickable' data-id='$customer_id'>
-                      <td class='first_name'>$first_name</td>
-                      <td class='last_name'>$last_name</td>
-                      <td class='street_address'>$street_address</td>
-                      <td class='city'>$city</td>
-                      <td class='state'>$state</td>
-                      <td class='zip'>$zip</td>
-                      <td class='action_buttons'>
-                        <a class='delete_button' href='/businessManager/Controllers/delete_customer.php?customer_id=$customer_id'>Delete</a> | 
-                        <a class='edit_button' data-id='$customer_id' href='/businessManager'>Edit</a>
-                      </td>
-                    </tr>";
+      $table_rows.="<tr class='clickable' data-href='/businessManager/Views/customer.php?customer_id=$customer_id'>";
     } 
+    $table_rows .= "<td class='first_name'>$first_name</td>
+      <td class='last_name'>$last_name</td>
+      <td class='street_address'>$street_address</td>
+      <td class='city'>$city</td>
+      <td class='state'>$state</td>
+      <td class='zip'>$zip</td>
+      <td class='action_buttons'>
+        <a class='delete_button' href='/businessManager/Controllers/delete_customer.php?customer_id=$customer_id'>Delete</a> | 
+        <a class='edit_button' data-id='$customer_id' href='/businessManager'>Edit</a>
+      </td>
+    </tr>";
   }
 }
 ?>

@@ -3,75 +3,130 @@ require __DIR__."/../Models/Page.php";
 require __DIR__."/../Models/Customer.php";
 $page = new Page();
 $db = new Database();
-$customer = new Customer(intval($_GET['id']));
+$customer = new Customer(intval($_GET['customer_id']));
 
 $sales = $customer->get_sales();
-$sales_selection_list = "";
+$sales_table_rows = "";
 forEach($sales as $sale){
-  extract($sale);
-  $sales_selection_list .= "<option value='$sale_id'>$sale_total</option>";
+  extract($sale);//sale_id, sales_person, sale_total, sale_date
+  $sales_table_rows .= "
+  <tr class='clickable' data-href='/businessManager/Views/customer.php?customer_id={$customer->get_customer_id()}&sale_id=$sale_id' data-id='$sale_id'>
+    <td class='sale_number'>$sale_id</td>
+    <td class='sales_person'>$sales_person</td>
+    <td class='sale_total'>$sale_total</td>
+    <td class='sale_date'>$sale_date</td>
+  </tr>";
+}
+
+$invoices = isset($_GET['sale_id']);
+if($invoices){
+  $sale_id = intval($_GET['sale_id']);
+  $invoices = $customer->get_invoices_for_sale(intval($sale_id));
+  $invoice_table_rows = "";
+  if(count($invoices) > 0){
+    forEach($invoices as $invoice){
+      extract($invoice); //invoice_id, sent_date, due_date, total, web_link
+      $invoice_table_rows.="<tr>
+        <td>$sale_id</td>
+        <td>$invoice_id</td>
+        <td>$sent_date</td>
+        <td>$due_date</td>
+        <td>$total</td>
+        <td>$web_link</td>
+      </tr>";
+    }
+  }else{
+    // there are no invoices for this sale. 
+  }
 }
 ?>
 
 <main>
-  <div class="customer_card">
-    <h1><?php echo $customer->get_first_name()." ".$customer->get_last_name() ?></h1>
-    <p><?php echo $customer->get_street_address();?></p>
-    <p><?php echo $customer->get_city();?></p>
-    <p><?php echo $customer->get_state(); ?></p>
-    <p><?php echo $customer->get_zip(); ?></p>
-  </div>
-
-  <div class="customer_invoices">
-    <div class="show_form_button">
-      <button class="show_form collapsed">New invoice</button>
+  <div class="card">
+    <div class="card_title">
+      <h1><?php echo $customer->get_first_name()." ".$customer->get_last_name() ?></h1>
     </div>
-
-    <div class="form_container">
-      <form action="/businessManager/Controllers/new_invoice.php" method="POST">
-        <div class="form_title">
-          <h1>New invoice for <?php echo $customer->get_first_name(); ?></h1>
+    <hr class="card_line">
+    <div class="card_details">
+      <div class="grid_container">
+        <div class="grid_item_label">
+          Street address:
         </div>
-        <div class="grid_container">
-          <div class="grid_item_input">
-            <input type="number" name="customer_id" hidden value='<?php echo $customer->get_customer_id(); ?>'>
-          </div>
-
-          <div class="grid_item_label">
-            <label for="sale">Sale</label>
-          </div>
-          <div class="grid_item_input">
-            <select name="sale_id" id="sale">
-              <?php echo $sales_selection_list; ?>
-            </select>
-          </div>
-
-          <div class="grid_item_label">
-            <label for="sent_date">Send date</label>
-          </div>
-          <div class="grid_item_input">
-            <input type="date" id="sent_date" name="sent_date">
-          </div>
-
-          <div class="grid_item_label">
-            <label for="due_date">Due date</label>
-          </div>
-          <div class="grid_item_input">
-            <input type="date" id="due_date" name="due_date">
-          </div>
-
-          <div class="grid_item_label">
-            <label for="total">Total</label>
-          </div>
-          <div class="grid_item_input">
-            <input type="number" id="total" name="total" min="0" step=".01">
-          </div>
-
-          <div class="grid_item_input">
-            <input type="submit">
-          </div>
+        <div class="grid_item_input">
+          <p><?php echo $customer->get_street_address();?></p>
         </div>
-      </form>
+
+        <div class="grid_item_label">
+          City:
+        </div>
+        <div class="grid_item_input">
+          <p><?php echo $customer->get_city();?></p>
+        </div>
+
+        <div class="grid_item_label">
+          State:
+        </div>
+        <div class="grid_item_input">
+          <p><?php echo $customer->get_state(); ?></p>
+        </div>
+
+        <div class="grid_item_label">
+          Zip:
+        </div>
+        <div class="grid_item_input">
+          <p><?php echo $customer->get_zip(); ?></p>
+        </div>
+      </div>
     </div>
   </div>
+
+  <div class="card">
+    <div class="card_title">
+      <h1>Sales</h1>
+    </div>
+    <hr class="card_line">
+    <div class="card_details">
+      <div class="table_container">
+        <table>
+          <thead>
+            <tr class="no-hover">
+              <th scope="col">Sale number</th>
+              <th scope="col">Sales person</th>
+              <th scope="col">Sale total</th>
+              <th scope="col">Sale date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php echo $sales_table_rows; ?>
+          </tbody>
+        </table>  
+      </div>
+    </div>
+  </div>
+
+  <?php if($invoices){ ?>
+    <div class="card">
+      <div class="card_title">
+        <h1>Invoices</h1>
+      </div>
+      <hr class="card_line">
+      <div class="card_details">
+        <table>
+          <thead>
+            <tr class="no-hover">
+              <th scope="col">Sale number</th>
+              <th scope="col">Invoice number</th>
+              <th scope="col">Sent date</th>
+              <th scope="col">Due date</th>
+              <th scope="col">Total</th>
+              <th scope="col">Web link</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php echo $invoice_table_rows; ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <?php } ?>
 </main>
