@@ -2,6 +2,7 @@ window.onload = ()=>{
   formAnimation();
   tableAnimation();
   clickableTableRows();
+  disableFields();
 }
 
 function formAnimation(){
@@ -75,4 +76,8 @@ function clickableTableRows(){
 function getNewPath(){
   const path = window.location.pathname;
   return path.slice(path.lastIndexOf("/") + 1, path.lastIndexOf(".") - 1);
+}
+
+function disableFields(){
+  const saleField = document.querySelector('#sale');
 }

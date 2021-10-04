@@ -1,8 +1,4 @@
 <?php 
-
-// Require in the Database file. 
-require_once __DIR__.'/Database.php';
-
 class Customer {
   private $customer_id;
   private $first_name;
@@ -13,11 +9,23 @@ class Customer {
   private $zip;
   private $db;
 
-  public function __construct($customer_id, $first_name, $last_name, $street_address, $city, $state, $zip){
+  public function __construct($customer_id){
     $this->db = new Database();
     $this->customer_id = $customer_id;
+    $this->get_attributes();
+  }
+
+  private function get_attributes(){
+    $query = "SELECT * FROM Customers WHERE customer_id = ?";
+    $param = ['customer_id' => $this->customer_id];
+    $result = $this->db->execute_sql_statement($query, $param);
+    if($result[0]){
+      $result = $result[1]->fetch_assoc();
+      // This extracts customer_id, first_name, last_name, street_address, city, state, zip.
+      extract($result); 
+    }
     $this->first_name = $first_name;
-    $this->last_name = $last_name;
+    $this->last_name = $last_name; 
     $this->street_address = $street_address;
     $this->city = $city;
     $this->state = $state;
@@ -80,6 +88,23 @@ class Customer {
 
   public function get_zip(){
     return $this->zip;
+  }
+
+  // This function returns a 2 dimensional array containing the sales for the current customer. 
+  // This function will return a populated array or an empty array if the customer doesn't have sales. 
+  // Example return: [ ['sale_id' =>1, 'sale_total' => 100.00, 'sale_date => '08-08-2021'], ['sale_id' => 2, 'sale_total' => 33.45, 'sale_date' => '10-01-2021'] ];
+  public function get_sales(){
+    $query = "SELECT sale_id, sale_total, sale_date FROM Sales WHERE customer_id = ?";
+    $result = $this->db->execute_sql_statement($query, ['customer_id' => $this->customer_id]);
+    $sales = [];
+    if($result[0]){
+      $result = $result[1];
+      while($row = $result->fetch_assoc()){
+        extract($row);
+        array_push($sales, ['sale_id' => $sale_id, 'sale_total' => $sale_total, 'sale_date' => $sale_date]);
+      }
+    }
+    return $sales;
   }
 }
 ?>
