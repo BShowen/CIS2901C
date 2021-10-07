@@ -5,6 +5,8 @@ $page = new Page();
 $db = new Database();
 $customer = new Customer(intval($_GET['customer_id']));
 
+// Retrieve the list of sales for this particular customer. \
+// Create table rows for each sale.
 $sales = $customer->get_sales();
 $sales_table_rows = "";
 forEach($sales as $sale){
@@ -18,8 +20,10 @@ forEach($sales as $sale){
   </tr>";
 }
 
-$invoices = isset($_GET['sale_id']);
-if($invoices){
+// Get the list of invoices for this particular customer. 
+// If there are invoices then create a table row for each invoice. 
+$invoices_requested = isset($_GET['sale_id']);
+if($invoices_requested){
   $sale_id = intval($_GET['sale_id']);
   $invoices = $customer->get_invoices_for_sale(intval($sale_id));
   $invoice_table_rows = "";
@@ -36,12 +40,21 @@ if($invoices){
       </tr>";
     }
   }else{
-    // there are no invoices for this sale. 
+    $invoices_requested = false;
+    $user_message = True;
+    $message = 'There are no invoices for this sale.';
   }
 }
 ?>
 
 <main>
+
+  <div class="user_message">
+    <?php if(isset($user_message) && $user_message){ ?>
+      <h3 class="user_message_text"><?php echo $message ?></h3>
+    <?php } ?>
+  </div>
+  
   <div class="card">
     <div class="card_title">
       <h1><?php echo $customer->get_first_name()." ".$customer->get_last_name() ?></h1>
@@ -104,28 +117,30 @@ if($invoices){
     </div>
   </div>
 
-  <?php if($invoices){ ?>
+  <?php if($invoices_requested){ ?>
     <div class="card">
       <div class="card_title">
         <h1>Invoices</h1>
       </div>
       <hr class="card_line">
       <div class="card_details">
-        <table>
-          <thead>
-            <tr class="no-hover">
-              <th scope="col">Sale number</th>
-              <th scope="col">Invoice number</th>
-              <th scope="col">Sent date</th>
-              <th scope="col">Due date</th>
-              <th scope="col">Total</th>
-              <th scope="col">Web link</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php echo $invoice_table_rows; ?>
-          </tbody>
-        </table>
+        <div class="table_container">
+          <table>
+            <thead>
+              <tr class="no-hover">
+                <th scope="col">Sale number</th>
+                <th scope="col">Invoice number</th>
+                <th scope="col">Sent date</th>
+                <th scope="col">Due date</th>
+                <th scope="col">Total</th>
+                <th scope="col">Web link</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php echo $invoice_table_rows; ?>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   <?php } ?>
