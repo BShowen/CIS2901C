@@ -113,5 +113,42 @@ class Database{
     }
     return $param_types;
   }
+
+  // This function will delete a row from a database. This function is called only after all checks for child records have 
+  // been performed. In other words, this function should never fail. This function is reached after the object being deleted 
+  // has checked for children records and found zero children records. Otherwise this function is not reached. 
+  // params must be ['column_name'=>column_value]
+  // table_name must be a string of the exact table name in the database. 
+  // Database->delete(['user_id'=>10], 'Users');
+  public function delete($params, $table_name){
+    $column_name = $column_name = array_keys($params)[0];
+    $query = "DELETE FROM $table_name WHERE $column_name = ?";
+    $results = $this->execute_sql_statement($query, $params);
+    return $results[0];
+  }
+
+
+  // ['user_id'=>int, 'user_name'=>String, 'etc'=>etc];
+  public function update($params, $table_name){
+    $attribute_names = array_keys($params);
+    $query = "UPDATE $table_name ";
+    for($i = 1; $i < count($attribute_names); $i++){
+      if($i + 1 == count($params)){
+        $query .= " SET $attribute_names[$i] = ? ";
+      }else{
+        $query .= " SET $attribute_names[$i] = ?, ";
+      }
+    }
+    $query .= "WHERE $attribute_names[0] = ?";
+    
+    // The next four lines of code are reordering the $params so that they match with the query parameters. 
+    // The parameters need to be in lexical order with the query parameters. 
+    $primary_key_name = $attribute_names[0];
+    $primary_key_value = $params[$primary_key_name];
+    unset($params[$primary_key_name]);
+    $params[$primary_key_name] = $primary_key_value;
+
+    return $this->execute_sql_statement($query, $params);
+  }
 }
 ?>
