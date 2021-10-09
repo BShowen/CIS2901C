@@ -38,7 +38,7 @@ class Database{
   // $sql_parameters are the parameters required for the sql statement, and is 
   // passed in as an array as ['name'=>'FooBar', 'age'=>33];
   // Example call: execute_sql_statement("SELECT * FROM users WHERE id > ?", ["id"=> 5]);
-  public function execute_sql_statement($sql_statement, $sql_parameters = null){
+  public function execute_sql_statement($sql_statement, $sql_parameters = null){  
     $results = [False, null]; //This variable is what will be returned from this method.
     if($this->connection_status){
       $query = $sql_statement;
@@ -130,25 +130,30 @@ class Database{
 
   // ['user_id'=>int, 'user_name'=>String, 'etc'=>etc];
   public function update($params, $table_name){
-    $attribute_names = array_keys($params);
-    $query = "UPDATE $table_name ";
-    for($i = 1; $i < count($attribute_names); $i++){
-      if($i + 1 == count($params)){
-        $query .= " SET $attribute_names[$i] = ? ";
-      }else{
-        $query .= " SET $attribute_names[$i] = ?, ";
-      }
-    }
-    $query .= "WHERE $attribute_names[0] = ?";
+    $query = $this->build_update_query($params, $table_name);
     
-    // The next four lines of code are reordering the $params so that they match with the query parameters. 
+    // The next lines of code are reordering the $params so that they match with the query parameters. 
     // The parameters need to be in lexical order with the query parameters. 
+    $attribute_names = array_keys($params);
     $primary_key_name = $attribute_names[0];
     $primary_key_value = $params[$primary_key_name];
     unset($params[$primary_key_name]);
     $params[$primary_key_name] = $primary_key_value;
-
     return $this->execute_sql_statement($query, $params);
+  }
+
+  private function build_update_query($params, $table_name){
+    $attribute_names = array_keys($params);
+    $query = "UPDATE $table_name SET ";
+    for($i = 1; $i < count($attribute_names); $i++){
+      if($i + 1 == count($params)){
+        $query .= "$attribute_names[$i] = ? ";
+      }else{
+        $query .= "$attribute_names[$i] = ?, ";
+      }
+    }
+    $query .= "WHERE $attribute_names[0] = ?";
+    return $query;
   }
 }
 ?>

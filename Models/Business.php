@@ -1,8 +1,9 @@
 <?php 
 
 require __DIR__.'/Database.php';
+require_once __DIR__.'/CRUDInterface.php';
 
-class Business {
+class Business implements CRUDInterface {
 
   // These could be used by Database.php in the exists() method to make using the method a lot simpler. 
   // Simply pass in the object and Database->exists() will extract the information needed to see if the Object exists. 
@@ -14,14 +15,12 @@ class Business {
   private $db;
   private $business_name;
   private $business_id;
-  private $employees;
-  private $sales;
-  private $invoices;
+  private $business_exists;
 
-
-  public function __construct($params = NULL){
+  public function __construct($params){
     $this->db = new Database();
-    $this->set_attrs($params);
+    $this->set_attributes($params);
+    $this->business_exists = isset($this->business_id); //The business_id is only set if the business exists in the database. 
     return $this;
   }
 
@@ -34,9 +33,8 @@ class Business {
       $params = ['business_id' => intval($id)];
       $results = $db->execute_sql_statement($query, $params);
       if($results[0]){
-        extract($results[1]->fetch_assoc()); // business_id=int, business_name=String
-        $params = ['business_id' => intval($business_id), 'business_name' => $business_name];
-        return new Business($params);
+        $business_attributes = $results[1]->fetch_assoc();
+        return new Business($business_attributes);
       }
     }else{
       // There should be a custom error class. One that is thrown from the database. Not the models. 
@@ -45,58 +43,61 @@ class Business {
   }
 
   // Creates a new Business object. Called by the constructor. 
-  // Params is ['business_name' => String]
-  private function set_attrs($params){
-    extract($params);
-    $this->business_name = $business_name;
-    $this->business_id = isset($params['business_id']) ? $params['business_id'] : Null ;
+  // Params is ['attribute_name'=>value, 'attribute_name'=>value]
+  private function set_attributes($params){
+    foreach($params as $attribute_name => $attribute_value){
+      $this->$attribute_name = $attribute_value;
+    }
   }
 
   // Saves the current object in the database. 
   public function save(){
-    // Determine if the object already exists. If it does then we need to update the attributes. If we simply save 
-    // the object when it already exists then this will create duplicate objects in the database. BAD. 
-    $exists = False;
-    //business_id will only be set when we are manipulating an object, not when we are creating a NEW object. 
-    // When we are creating a NEW object, business_id is left blank so that the DB can auto increment and assign a proper id. 
-    if(isset($this->business_id)){ 
-      $exists = $this->db->exists(['business_id' => $this->business_id],'Businesses');
-    }
-
     // If the object already exists in the DB then the False condition is triggered. 
     // If the object DOES NOT exists in the DB then the True condition is triggered. 
-    if($this->has_valid_attributes() && !$exists){
+    if($this->has_valid_attributes() && !$this->business_exists){
       $query = "INSERT INTO Businesses (business_name) VALUES(?)";
       $params = ['business_name' => $this->business_name];
       $results = $this->db->execute_sql_statement($query, $params);
       //This is a boolean value. This value CAN be false is something goes wrong in the database. 
       // For this reason I don't simply return true. I return what the database returns. 
       return $results[0]; 
-    }elseif($this->has_valid_attributes() && $exists){
-      $this->update();
+    }elseif($this->has_valid_attributes() && $this->business_exists){
+      return $this->update();
     }
     return False;
   }
 
   // Returns a boolean indicating whether or not the current state of the object is valid to save in the database. 
   private function has_valid_attributes(){
-    $valid = False;
-    $valid_name = strlen(trim($this->business_name)) > 0;
-    if(!$valid_name){
-      array_push($this->errors, 'You must enter a business name greater than 0 characters and less than 51 characters.');
-      return $valid;
+    if(strlen(trim($this->business_name)) == 0 || strlen(trim($this->business_name)) > 50 ){
+      array_push($this->errors, 'Business name must be greater than 0 characters and less than 51 characters.');
     }
-    $valid = !$valid; 
-    return $valid;
+    return count($this->errors) == 0;
   }
 
   private function update(){
     $params = ['business_id' => $this->business_id, 'business_name' => $this->business_name];
-    var_dump($this->db->update($params, 'Businesses'));
+    return $this->db->update($params, 'Businesses')[0];
   }
 
   public function __get($name){
-    return $this->$name;
+    switch($name){
+      case 'customers':
+        return $this->get_child_records(['table'=>'Customers']);
+        break;
+      case 'employees':
+        return $this->get_child_records(['table'=>'Employees']);
+        break;
+      case 'invoices':
+        return $this->get_child_records(['table'=>'Invoices']);
+        break;
+      case 'sales';
+        return $this->get_child_records(['table'=>'Sales']);
+        break;
+      default:
+        return $this->$name;
+        break;
+    }
   }
 
   public function __set($name, $value){
@@ -109,7 +110,7 @@ class Business {
   public function delete(){
     $business_has_employees = $this->db->exists(['business_id'=> $this->business_id], 'Employees');
     if($business_has_employees){
-      array_push($this->errors, 'You must delete all employees before deleting a business.');
+      array_push($this->errors, 'You cannot delete an business until the business employee\'s have been deleted.');
       return False;
     }else{
       $params = ['business_id' => $this->business_id];
@@ -125,13 +126,55 @@ class Business {
     $businesses = [];
     if($results[0]){
       $rows = $results[1];
-      while($row = $rows->fetch_assoc()){
-        array_push($businesses, new Business(null, $row));
+      while($business_attributes = $rows->fetch_assoc()){
+        array_push($businesses, new Business($business_attributes));
       }
     }else{
       echo "Business.php line 76"; exit;
     }
     return $businesses;
   }
+
+  // Returns the children records. 
+  // $params determines what children are returned. For example, if $params = ['table'=>'Employees']
+  // then a list of children Employee objects is returned. 
+  private function get_child_records($params){
+    $child_type = substr($params['table'], 0, strlen($params['table']) - 1);
+    $child_table = $params['table'];
+    $child_records = [];
+    $business_has_children = $this->db->exists(['business_id'=>intval($this->business_id)], $child_table);
+    if($business_has_children){
+      $query = "SELECT * FROM $child_table WHERE business_id = ?";
+      $params = ['business_id' => $this->business_id];
+      $results = $this->db->execute_sql_statement($query, $params);
+      if($results[0]){
+        $rows = $results[1];
+        while($child_record_attributes = $rows->fetch_assoc()){
+          switch($child_type){
+            case 'Employee':
+              $child_object = new Employee($child_record_attributes);
+              break;
+            case 'Customer':
+              $child_object = new Customer($child_record_attributes);
+              break;
+            case 'Sale':
+              $child_object = new Sale($child_record_attributes);
+              break;
+            case 'Invoice': 
+              $child_object = new Invoice($child_record_attributes);
+              break;
+            default:
+              throw new Error('Error thrown in Employee>get_child_records>switch statement.');
+              break;
+          }
+          array_push($child_records, $child_object);
+        }
+      }
+    }else{
+      array_push($this->errors, "This business does not have any $child_type"."s.");
+    }
+    return $child_records;  
+  }
+
 }
 ?>
