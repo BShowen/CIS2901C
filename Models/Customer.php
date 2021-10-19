@@ -19,6 +19,9 @@ class Customer implements CRUDInterface {
     $this->db = new Database();
     $this->set_attributes($params);
     $this->customer_exists = isset($this->customer_id); //The customer_id is only set if the customer exists in the database. 
+    if(!isset($this->business_id) && isset($_COOKIE['business_id'])){
+      $this->business_id = $_COOKIE['business_id'];
+    }
     return $this;
   }
 
@@ -28,16 +31,15 @@ class Customer implements CRUDInterface {
 
   public static function all(){
     $database = new Database();
-    $query = "SELECT * FROM Customers";
-    $results = $database->execute_sql_statement($query);
+    $query = "SELECT * FROM Customers WHERE business_id = ?";
+    $params = ['business_id'=>intval($_COOKIE['business_id'])];
+    $results = $database->execute_sql_statement($query, $params);
     $customers = [];
     if($results[0]){
       $rows = $results[1];
       while($attributes = $rows->fetch_assoc()){
         array_push($customers, new Customer($attributes));
       }
-    }else{
-      echo "There are no customers";exit;
     }
     return $customers;
   }
@@ -179,19 +181,12 @@ class Customer implements CRUDInterface {
       case 'invoices':
         return $this->get_child_records(['table'=>'Invoices']);
         break;
-      case 'errors':
-        return $this->get_errors();
       default:
         return $this->$name;
         break;
     }
   }
-
-  private function get_errors(){
-    $messages = $this->errors;
-    $this->errors = [];
-    return $messages;
-  }
+  
 
 
   // Returns the children records. 

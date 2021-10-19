@@ -46,7 +46,7 @@ function getStyle(element, style){
 function tableAnimation(){
   const newRow = document.querySelector('.new_row');
   if(newRow){
-    newRow.style.backgroundColor = "white";
+    newRow.style.backgroundColor = "#F4F7FA";
     setTimeout(()=>{
       newRow.classList = null;
       newRow.style.backgroundColor = null;

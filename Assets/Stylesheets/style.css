@@ -170,7 +170,7 @@ div.form_container form {
 .delete_button, .edit_button{ 
   /* height: var(--table-row-height); */
 }
-.delete_button:hover, .edit_button:hover{
+.action_button:hover{
   color: white;
 }
 

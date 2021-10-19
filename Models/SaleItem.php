@@ -6,22 +6,18 @@ class SaleItem implements CRUDInterface {
 
   private $sale_id;
   private $item_id;
-  private $item_name;
-  private $item_description;
-  private $in_stock;
-  private $stock_level;
-  private $price;
-
-  private $sale; //This will be set to a Sale object.
-  private $sale_item; 
+  private $quantity;
+  private $business_id;
+  private $errors = [];
   private $db;
+  private $sale_item_exists;
 
 
   public function __construct($params){
     $this->db = new Database();
     $this->set_attributes($params);
     if(isset($this->item_id) && isset($this->sale_id)){
-      $this->sale_item = True;
+      $this->sale_item_exists = True;
     }
     return $this;
   }
@@ -49,7 +45,100 @@ class SaleItem implements CRUDInterface {
     $this->$name = $value;
   }
 
-  public function save(){}
+  public function save(){
+    $has_valid_attributes = $this->has_valid_attributes();
+    if($has_valid_attributes && !$this->sale_item_exists){ 
+      //if true then we are saving a new customer
+      $query = $this->build_insertion_query();
+
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////
+      // This needs to be its own function
+      $attribute_name_list = $this->get_attribute_names();
+      $params = [];
+      foreach($attribute_name_list as $attribute_name){
+        $params[$attribute_name] = $this->$attribute_name;
+      }
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////
+      $results = $this->db->execute_sql_statement($query, $params);
+      return $results[0]; 
+      //This is a boolean value. This value CAN be false is something goes wrong in the database. 
+      // For this reason I don't simply return true. I return what the database returns. 
+    }elseif($has_valid_attributes && $this->sale_item_exists){ 
+      //if true then we are updating an existing customer
+      return $this->update();
+    }
+    //If this is reached then the SaleItem object has invalid attributes. 
+    return False; 
+  }
+
+  // Returns a boolean indicating whether or not the current state of the object is valid to save in the database. 
+  private function has_valid_attributes(){
+    if($this->quantity < 0){
+      array_push($this->errors, 'Quantity must be greater than or equal to 0.');
+    }
+    return count($this->errors) == 0;
+  }
+
+  // This function builds an insertion query string. Called by $this->save();
+  private function build_insertion_query(){
+    $attribute_names = $this->get_attribute_names();   
+      $query_parameter_placeholder = "";
+      for($i = 0; $i < count($attribute_names); $i++){
+        $query_parameter_placeholder .= ($i == count($attribute_names) - 1) ? "?" : "?, ";
+      }
+      return "INSERT INTO Sales_items ( ".implode(', ', $this->get_attribute_names())." ) VALUES( $query_parameter_placeholder )";
+  }
+
+  // This function updates the record in the database. 
+  private function update(){
+    $params = ['sale_id'=>$this->sale_id, 'item_id'=>$this->item_id];
+    $attribute_names = $this->get_attribute_names();
+    foreach($attribute_names as $attribute_name){
+      $params[$attribute_name] = $this->$attribute_name;
+    }
+    $query = $this->build_update_query($params, 'Sale_items');
+
+    // Here I am sre-ordering the associative array of query params. 
+    // sale_id and item_id need to be the last key/value pairs in the params.
+    unset($params['sale_id']);
+    unset($params['item_id']);
+    $params['sale_id'] = $this->sale_id;
+    $params['item_id'] = $this->item_id;
+    
+    return $this->db->execute_sql_statement($query, $params)[0];
+  }
+
+  // This function builds the update query. It needs to be refactored so that only updated values are sent to the db. 
+  // This function returns a string similar to "UPDATE Sale_items SET quantity = ? WHERE sale_id = ? AND item_id = ?";
+  private function build_update_query($params, $table_name){
+    $attribute_names = array_keys($params);
+    $query = "UPDATE $table_name SET ";
+    for($i = 2; $i < count($attribute_names); $i++){
+      if($i + 1 == count($params)){
+        $query .= "$attribute_names[$i] = ? ";
+      }else{
+        $query .= "$attribute_names[$i] = ?, ";
+      }
+    }
+    $primary_key_1 = $attribute_names[0];
+    $primary_key_2 = $attribute_names[1];
+    $query .= "WHERE $primary_key_1 = ? AND $primary_key_2 = ?";
+    return $query;
+  }
+
+  // This function queries the database ands returns a list of attributes required for the object. 
+  // Primary_key is omitted from the returned list. 
+  // example return value ['first_name', 'last_name', 'etc', ... ];
+  private function get_attribute_names(){
+    $query = "SHOW COLUMNS FROM Sale_items";
+    $results = $this->db->execute_sql_statement($query);
+    $attributes = [];
+    while($row = $results[1]->fetch_assoc()){
+      array_push($attributes, $row['Field']);
+    }
+    // Omit the first two columns because this object has a composite primary key and this function is not supposed to return primary keys. 
+    return array_slice($attributes, 2);
+  }
 
   public static function all(){
     $database = new Database();
@@ -84,9 +173,9 @@ class SaleItem implements CRUDInterface {
   }
 
   public function delete(){
-    throw new Error('SaleItem->delete() is not currently supported');
-    // $params = ['sale_id' => $this->sale_id, 'item_id' => $this->item_id];
-    // return $this->db->delete($params, 'SaleItems');
+    $query = "DELETE FROM Sale_items WHERE sale_id = ? AND item_id = ?";
+    $params = ['sale_id'=>$this->sale_id, 'item_id'=>$this->item_id];
+    return $this->db->execute_sql_statement($query, $params)[0];
   }
 }
 

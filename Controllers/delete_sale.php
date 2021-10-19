@@ -1,14 +1,25 @@
 <?php 
-session_start();
-
 require __DIR__.'/../Models/Database.php';
+require __DIR__.'/../Models/Sale.php';
+require __DIR__.'/../Models/SaleItem.php'; //This object is used internally by Sale. This statement is required.
 $db = new Database();
 
-$query = 'DELETE FROM Sales WHERE sale_id = ?';
-$params = $_GET;
-$params['sale_id'] = intval($params['sale_id']);
+$sale_id =  intval($_GET['sale_id']);
+$sale = Sale::find_by_id($sale_id);
 
-$results = $db->execute_sql_statement($query, $params);
-$_SESSION['user_message'] = 'Sale successfully deleted';
-Header('Location: http://'.$_SERVER['HTTP_HOST'].'/businessManager/Views/sales.php');
+$messages = ['errors'=>[], 'success'=>[]];
+if($sale->delete()){
+  array_push($messages['success'], 'Sale successfully deleted.');
+}else{
+  $messages['errors'] = $sale->errors;
+}
+$_SESSION['messages'] = $messages;
+
+// Refer the user back to the page they were on.
+$referer = $_SERVER['HTTP_REFERER'];
+$second_query_param = strpos($referer, "&");
+if($second_query_param > 0){
+  $referer = trim(substr($referer, 0, $second_query_param));
+}
+Header('Location: '.$referer);
 ?>

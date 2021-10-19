@@ -131,7 +131,6 @@ class Database{
   // ['user_id'=>int, 'user_name'=>String, 'etc'=>etc];
   public function update($params, $table_name){
     $query = $this->build_update_query($params, $table_name);
-    
     // The next lines of code are reordering the $params so that they match with the query parameters. 
     // The parameters need to be in lexical order with the query parameters. 
     $attribute_names = array_keys($params);
@@ -152,7 +151,8 @@ class Database{
         $query .= "$attribute_names[$i] = ?, ";
       }
     }
-    $query .= "WHERE $attribute_names[0] = ?";
+    $primary_key = $attribute_names[0];
+    $query .= "WHERE $primary_key = ?";
     return $query;
   }
 }

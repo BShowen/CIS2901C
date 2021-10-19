@@ -1,15 +1,18 @@
 <?php 
-  session_start();  
-  require __DIR__.'/../Models/Database.php';
-  $db = new Database();
+require __DIR__.'/../Models/Database.php';
+require __DIR__.'/../Models/Customer.php';
+$db = new Database();
 
-  $query = 'DELETE FROM Customers WHERE customer_id = ?';
-  $params = $_GET;
-  $params['customer_id'] = intval($params['customer_id']);
+$customer_id =  intval($_GET['customer_id']);
+$customer = Customer::find_by_id($customer_id);
 
-  $results = $db->execute_sql_statement($query, $params);
+$messages = ['errors'=>[], 'success'=>[]];
+if($customer->delete()){
+  array_push($messages['success'], 'Customer successfully deleted.');
+}else{
+  $messages['errors'] = $customer->errors;
+}
+$_SESSION['messages'] = $messages;
 
-  $_SESSION['user_message'] = 'Customer successfully deleted';
-  Header('Location: http://'.$_SERVER['HTTP_HOST'].'/businessManager/Views/customers.php');
-
+Header('Location: http://'.$_SERVER['HTTP_HOST'].'/businessManager/Views/customers.php');
 ?>

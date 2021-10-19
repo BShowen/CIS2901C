@@ -1,51 +1,55 @@
 <?php 
 require __DIR__."/../Models/Page.php";
-require __DIR__."/../Models/Invoices.php";
 
 $page = new Page();
 $db = new Database();
-$invoices = new Invoices();
 
-// This section of code is used when the user is being redirected to this page and there is a status message in the session. 
-// This happens when the user uses the form on this page to create a new invoice or deletes a invoice. The form is submitted, a
-// database connection and SQL statement are executed, this page is re-rendered with a status in the session. 
-$user_message = isset($_SESSION['user_message']);
-$message = '';
-if($user_message){
-  $message = $_SESSION['user_message'];
-  $_SESSION['user_message'] = null;
-}
+$has_error_message = isset($_SESSION['messages']['errors']) ? count($_SESSION['messages']['errors']) > 0 : 0;
+$has_success_message = isset($_SESSION['messages']['success']) ? count($_SESSION['messages']['success']) > 0 : 0;
 
 
-$result = $invoices->get_all_invoices();
+$invoices = Invoice::all();
 $table_rows = "";
 $current_row = 0;
-$last_row = count($result);
-foreach($result as $row){
+$last_row = count($invoices);
+foreach($invoices as $invoice){
   $current_row++;
-  extract($row);
-  if(str_contains($message, 'added') && ($current_row == $last_row)){
+  $customer_full_name = $invoice->customer->first_name.' '.$invoice->customer->last_name;
+  if($has_success_message && ($current_row == $last_row)){
     $table_rows.="<tr class='new_row'>";
   }else{
     $table_rows.="<tr>";
   }
-  $table_rows.="<td>$customer_name</td>  
-                <td>$sent_date</td>
-                <td>$due_date</td>
-                <td>$total</td>
-                <td>$web_link</td>
+  $table_rows.="<td>$customer_full_name</td>  
+                <td>$invoice->sent_date</td>
+                <td>$invoice->due_date</td>
+                <td>$invoice->total</td>
+                <td>$invoice->web_link</td>
                 <td class='action_buttons'>
-                  <a class='delete_button' href='/businessManager/Controllers/delete_invoice.php?invoice_id=$invoice_id'>Delete</a> | 
-                  <a class='edit_button' href='#'>Edit</a>
+                  <a class='action_button' href='/businessManager/Controllers/delete_invoice.php?invoice_id=$invoice->invoice_id'>Delete</a> <!-- | 
+                  <a class='action_button' href='#'>Edit</a> -->
                 </td>
               </tr>";
+}
+
+// Type is a string. it should be set to either "errors" or "success"
+function print_message($type){ 
+  foreach($_SESSION['messages'][$type] as $message){
+    echo "<h3 class='user_message_text'> $message </h3>";
+  }
+  $_SESSION['messages'][$type] = [];
 }
 ?>
 <main>
   <div class="user_message">
-    <?php if($user_message){ ?>
-      <h3 class="user_message_text"><?php echo $message ?></h3>
-    <?php } ?>
+    <?php 
+    if($has_error_message){   
+      print_message('errors');
+    }
+    if($has_success_message){
+      print_message('success');
+    }
+    ?>
   </div>
 
   <div class="table_container">
@@ -65,7 +69,7 @@ foreach($result as $row){
         <?php echo $table_rows; ?>
       </tbody>
     </table>
-  </div>  
+  </div>
 </main>
 <?php 
 $page->render_footer();

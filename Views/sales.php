@@ -1,73 +1,62 @@
 <?php 
 require __DIR__."/../Models/Page.php";
 $page = new Page();
-
 $db = new Database();
 
-// This section of code is used when the user is being redirected to this page and there is a status message in the session. 
-// This happens when the user uses the form on this page to create a new sale or deletes a sale. The form is submitted, a
-// database connection and SQL statement are executed, this page is re-rendered with a status in the session. 
-$user_message = isset($_SESSION['user_message']);
-$message = '';
-if($user_message){
-  $message = $_SESSION['user_message'];
-  $_SESSION['user_message'] = null;
-}
+$has_error_message = isset($_SESSION['messages']['errors']) ? count($_SESSION['messages']['errors']) > 0 : 0;
+$has_success_message = isset($_SESSION['messages']['success']) ? count($_SESSION['messages']['success']) > 0 : 0;
 
-//Query for selecting sales person, customer, and sales date.
-$query = "SELECT 
-          concat(E.first_name, ' ', E.last_name) AS 'sales_person', 
-          concat(C.first_name, ' ', C.last_name) AS customer, 
-          S.sale_total, 
-          S.sale_date,
-          S.sale_id
-          FROM Sales AS S JOIN Customers AS C USING (customer_id)
-          JOIN Employees AS E USING (employee_id)";
-
-$result = $db->execute_sql_statement($query);
+$sales = Sale::all();
+$last_row = count($sales);
+$current_row = 0;
 $table_rows = "";
-if($result[0]){
-  $result = $result[1];
-  $last_row = $result->num_rows;
-  $current_row = 0;
-  while ($row = $result->fetch_assoc()) {
-    $current_row++;
-    extract($row);
-    if(str_contains($message, 'added') && ($current_row == $last_row)){
-      $table_rows.="<tr class='new_row clickable' data-href='/businessManager/Views/sale.php?sale_id=$sale_id'>";
-    }else{
-      $table_rows.="<tr class='clickable' data-href='/businessManager/Views/sale.php?sale_id=$sale_id'>";
-    }
-    $table_rows.="<td>$sales_person</td>
-      <td>$customer</td>
-      <td>$sale_total</td>
-      <td>$sale_date</td>
-      <td class='action_buttons'>
-        <a class='delete_button' href='/businessManager/Controllers/delete_sale.php?sale_id=$sale_id'>Delete</a> | 
-        <a class='edit_button' data-id='$sale_id' href='#'>Edit</a>
-      </td>
-    </tr>"; 
+foreach($sales as $sale){
+  $current_row++;
+  if($has_success_message && ($current_row == $last_row)){
+    $table_rows.="<tr class='new_row' data-href='/businessManager/Views/sale.php?sale_id=$sale->sale_id'>";
+  }else{
+    $table_rows.="<tr data-href='/businessManager/Views/sale.php?sale_id=$sale->sale_id'>";
   }
+  $sales_person = $sale->sales_person->first_name;
+  $customer = $sale->customer;
+  $table_rows.="<td>$sales_person</td>
+    <td>$customer->first_name</td>
+    <td>$sale->sale_total</td>
+    <td>$sale->sale_date</td>
+    <td class='action_buttons'>
+      <a class='action_button' href='/businessManager/Controllers/delete_sale.php?sale_id=$sale->sale_id'>Delete</a> <!-- | 
+      <a class='action_button' data-id='$sale->sale_id' href='#'>Edit</a> -->
+    </td>
+  </tr>"; 
 }
 
 // This query is responsible for retrieving the list of customers from the database. 
 // This list is used in the form to allow the user to pick out the customer when they're creating a new sale. 
-$customer_query = "SELECT customer_id, first_name, last_name FROM Customers";
-$customer_results = $db->execute_sql_statement($customer_query);
+$customers = Customer::all();
 $customer_selection_list = "";
-if($customer_results[0]){
-  $result = $customer_results[1];
-  while ($row = $result->fetch_assoc()){
-    extract($row);
-    $customer_selection_list .= "<option value=$customer_id>$first_name $last_name</option>";
+foreach($customers as $customer){
+  $customer_full_name = $customer->first_name." ".$customer->last_name;
+  $customer_selection_list .= "<option value=$customer->customer_id>$customer_full_name</option>";
+}
+
+// type is a string. it should be set to either "errors" or "success"
+function print_message($type){ 
+  foreach($_SESSION['messages'][$type] as $message){
+    echo "<h3 class='user_message_text'> $message </h3>";
   }
+  $_SESSION['messages'][$type] = [];
 }
 ?>
 <main>
-<div class="user_message">
-    <?php if($user_message){ ?>
-      <h3 class="user_message_text"><?php echo $message ?></h3>
-    <?php } ?>
+  <div class="user_message">
+    <?php 
+    if($has_error_message){   
+      print_message('errors');
+    }
+    if($has_success_message){
+      print_message('success');
+    }
+    ?>
   </div>
 
   <div class="table_container">

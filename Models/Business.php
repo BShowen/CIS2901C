@@ -1,6 +1,4 @@
 <?php 
-
-require __DIR__.'/Database.php';
 require_once __DIR__.'/CRUDInterface.php';
 
 class Business implements CRUDInterface {
@@ -94,7 +92,10 @@ class Business implements CRUDInterface {
       case 'sales';
         return $this->get_child_records(['table'=>'Sales']);
         break;
-      default:
+      case 'inventory':
+        return $this->get_child_records(['table'=>'Inventory_items']);
+        break;
+        default:
         return $this->$name;
         break;
     }
@@ -129,8 +130,6 @@ class Business implements CRUDInterface {
       while($business_attributes = $rows->fetch_assoc()){
         array_push($businesses, new Business($business_attributes));
       }
-    }else{
-      echo "Business.php line 76"; exit;
     }
     return $businesses;
   }
@@ -163,8 +162,14 @@ class Business implements CRUDInterface {
             case 'Invoice': 
               $child_object = new Invoice($child_record_attributes);
               break;
+            case 'Sale_item':
+              $child_object = new SaleItem($child_record_attributes);
+              break;
+            case 'Inventory_item':
+              $child_object = new InventoryItem($child_record_attributes);
+              break;
             default:
-              throw new Error('Error thrown in Employee>get_child_records>switch statement.');
+              throw new Error("Error thrown in Sale>get_child_records>switch statement. Child type = {$child_type}");
               break;
           }
           array_push($child_records, $child_object);

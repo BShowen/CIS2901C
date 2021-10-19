@@ -18,6 +18,9 @@ class Sale implements CRUDInterface {
     $this->db = new Database();
     $this->set_attributes($params);
     $this->sale_exists = isset($this->sale_id);
+    if(!isset($this->business_id) && isset($_COOKIE['business_id'])){
+      $this->business_id = $_COOKIE['business_id'];
+    }
     return $this;
   }
 
@@ -41,6 +44,11 @@ class Sale implements CRUDInterface {
       case 'sale_items':
         return $this->get_child_records(['table'=>'Sale_items']);
         break;
+      case 'sales_person':
+        return Employee::find_by_id($this->employee_id);
+        break;
+      case 'customer':
+        return Customer::find_by_id($this->customer_id);
       default: 
         return $this->$name;
         break;
@@ -75,14 +83,18 @@ class Sale implements CRUDInterface {
             case 'Invoice': 
               $child_object = new Invoice($child_record_attributes);
               break;
+            case 'Sale_item':
+              $child_object = new SaleItem($child_record_attributes);
+              break;
             default:
-              throw new Error('Error thrown in Sale>get_child_records>switch statement.');
+              throw new Error("Error thrown in Sale>get_child_records>switch statement. Child type = {$child_type}");
               break;
           }
           array_push($child_records, $child_object);
         }
       }
     }else{
+      $child_type = strtolower($child_type);
       array_push($this->errors, "This sale does not have any $child_type"."s.");
     }
     return $child_records;  
@@ -100,8 +112,6 @@ class Sale implements CRUDInterface {
       while($attributes = $rows->fetch_assoc()){
         array_push($sales, new Sale($attributes));
       }
-    }else{
-      echo "There are no sales";exit;
     }
     return $sales;
   }
@@ -173,6 +183,12 @@ class Sale implements CRUDInterface {
 
   // Returns a boolean indicating whether or not the current state of the object is valid to save in the database. 
   private function has_valid_attributes(){
+    if($this->sale_total <= 0){
+      array_push($this->errors, 'A sale must have a total greater than 0.');
+    }
+    if(strlen(trim($this->sale_date)) == 0){
+      array_push($this->errors, 'A sale date is required for a sale.');
+    }
     return count($this->errors) == 0;
   }
 
@@ -192,6 +208,10 @@ class Sale implements CRUDInterface {
       array_push($this->errors, 'You cannot delete a sale until the sale\'s invoices have been deleted.');
     }
     if(count($this->errors) == 0){
+      $sale_items = $this->sale_items;
+      foreach($sale_items as $sale_item){
+        $sale_item->delete();
+      }
       $params = ['sale_id' => $this->sale_id];
       return $this->db->delete($params, 'Sales');
     }

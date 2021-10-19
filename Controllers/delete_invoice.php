@@ -1,15 +1,23 @@
 <?php
-session_start();  
 require __DIR__.'/../Models/Database.php';
+require __DIR__.'/../Models/Invoice.php';
 $db = new Database();
 
-$query = 'DELETE FROM Invoices WHERE invoice_id = ?';
-$params = $_GET;
-$params['invoice_id'] = intval($params['invoice_id']);
+$invoice = Invoice::find_by_id($_GET['invoice_id']);
 
-$results = $db->execute_sql_statement($query, $params);
+$messages = ['errors'=>[], 'success'=>[]];
+if($invoice->delete()){
+  array_push($messages['success'], 'Invoice successfully deleted.');
+}else{
+  $messages['errors'] = $invoice->errors;
+}
+$_SESSION['messages'] = $messages;
 
-$_SESSION['user_message'] = 'Invoice successfully deleted';
-Header('Location: http://'.$_SERVER['HTTP_HOST'].'/businessManager/Views/invoices.php');
-
+// Refer the user back to the page they were on. 
+$referer = $_SERVER['HTTP_REFERER'];
+$second_query_param = strpos($referer, "&");
+if($second_query_param > 0){
+  $referer = trim(substr($referer, 0, $second_query_param));
+}
+Header('Location: '.$referer);
 ?>

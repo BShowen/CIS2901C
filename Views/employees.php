@@ -2,20 +2,15 @@
 require __DIR__."/../Models/Page.php";
 $page = new Page();
 
-$db = new Database();
-
-$query = "SELECT first_name, last_name, user_name, email_address FROM Employees";
-$result = $db->execute_sql_statement($query);
+$employees = Employee::all();
 $table_rows = "";
-if($result[0]){
-  $result = $result[1];
-  while ($row = $result->fetch_assoc()) {
-    extract($row);
+if(!empty($employees)){
+  foreach($employees as $employee){
     $table_rows.="<tr>
-    <td>$first_name</td>
-    <td>$last_name</td>
-    <td>$user_name</td>
-    <td>$email_address</td>
+    <td>$employee->first_name</td>
+    <td>$employee->last_name</td>
+    <td>$employee->user_name</td>
+    <td>$employee->email_address</td>
     </tr>";
   }
 }

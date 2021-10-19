@@ -2,52 +2,51 @@
 require __DIR__."/../Models/Page.php";
 $page = new Page();
 
-$db = new Database();
+$has_error_message = isset($_SESSION['messages']['errors']) ? count($_SESSION['messages']['errors']) > 0 : 0;
+$has_success_message = isset($_SESSION['messages']['success']) ? count($_SESSION['messages']['success']) > 0 : 0;
 
-// This section of code is used when the user is being redirected to this page and there is a status message in the session. 
-// This happens when the user uses the form on this page to create a new inventory item or deletes an inventory item. The form is submitted, a
-// database connection and SQL statement are executed, this page is re-rendered with a status in the session. 
-$user_message = isset($_SESSION['user_message']);
-$message = '';
-if($user_message){
-  $message = $_SESSION['user_message'];
-  $_SESSION['user_message'] = null;
+$inventory_items = InventoryItem::all();
+$last_row = count($inventory_items);
+$current_row = 0;
+$table_rows = "";
+foreach($inventory_items as $inventory_item){
+  $current_row++;
+  if($has_success_message && ($current_row == $last_row)){
+    $table_rows.= "<tr class='new_row'>";
+  }else{
+    $table_rows.= "<tr>";
+  }
+  $in_stock = ($inventory_item->in_stock == 1) ? "Yes" : "No" ;
+  $table_rows.="  <td class='item_name'>$inventory_item->item_name</td>
+    <td class='item_description'>$inventory_item->item_description</td>
+    <td class='in_stock'>$in_stock</td>
+    <td class='stock_level'>$inventory_item->stock_level</td>
+    <td class='price'>$inventory_item->price</td>
+    <td class='action_buttons'>
+      <a class='action_button' href='/businessManager/Controllers/delete_inventory_item.php?item_id=$inventory_item->item_id'>Delete</a> <!-- |
+      <a class='action_button' href='#'>Edit</a> -->
+    </td>
+  </tr>";
 }
 
-$query = "SELECT * FROM Inventory_items";
-$result = $db->execute_sql_statement($query);
-$table_rows = "";
-if($result[0]){
-  $result = $result[1];
-  $last_row = $result->num_rows;
-  $current_row = 0;
-  while ($row = $result->fetch_assoc()) {
-    $current_row++;
-    extract($row);
-    $in_stock = $in_stock ? "True" : "False";
-    if(str_contains($message, 'added') && ($current_row == $last_row)){
-      $table_rows.= "<tr class='new_row'>";
-    }else{
-      $table_rows.= "<tr>";
-    }
-    $table_rows.="  <td class='item_name'>$item_name</td>
-      <td class='item_description'>$item_description</td>
-      <td class='in_stock'>$in_stock</td>
-      <td class='stock_level'>$stock_level</td>
-      <td class='price'>$price</td>
-      <td class='action_buttons'>
-        <a class='delete_button' href='/businessManager/Controllers/delete_inventory_item.php?item_id=$item_id'>Delete</a> |
-        <a class='edit_button' href='#'>Edit</a>
-      </td>
-    </tr>";
+// type is a string. it should be set to either "errors" or "success"
+function print_message($type){ 
+  foreach($_SESSION['messages'][$type] as $message){
+    echo "<h3 class='user_message_text'> $message </h3>";
   }
+  $_SESSION['messages'][$type] = [];
 }
 ?>
 <main>
   <div class="user_message">
-    <?php if($user_message){ ?>
-      <h3 class="user_message_text"><?php echo $message ?></h3>
-    <?php } ?>
+    <?php 
+    if($has_error_message){   
+      print_message('errors');
+    }
+    if($has_success_message){
+      print_message('success');
+    }
+    ?>
   </div>
 
   <div class="table_container">

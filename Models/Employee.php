@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__.'/CRUDInterface.php';
-
+require_once __DIR__.'/Database.php';
 class Employee implements CRUDInterface {
 
   private $employee_id;
@@ -13,8 +13,8 @@ class Employee implements CRUDInterface {
   private $password_reset_token; 
   private $is_admin;
   private $password; //This is set only when we are creating a NEW customer. This will be hashed and stored in the db. 
-  private $logged_in = false;
   private $errors = [];
+  private $authenticated;
 
   private $employee_exists;
 
@@ -25,7 +25,7 @@ class Employee implements CRUDInterface {
     // business_id will be set if the Employee object was instantiated using find_by_id. 
     // business_id will NOT be set if the Employee object is new and not yet saved in the DB. 
     // Either way, it is imperative that business_id be set. 
-    if(!isset($this->business_id)){
+    if(!isset($this->business_id) && isset($_COOKIE['business_id'])){
       $this->business_id = $_COOKIE['business_id'];
     }
 
@@ -33,6 +33,10 @@ class Employee implements CRUDInterface {
     // password_hash will NOT be set if the Employee object is new and not yet saved in the DB. 
     if(isset($this->password)){
       $this->password_digest = password_hash($this->password, PASSWORD_DEFAULT);
+    }
+
+    if(!isset($this->authenticated) && isset($_COOKIE['authenticated'])){
+      $this->authenticated = $_COOKIE['authenticated'];
     }
 
     $this->password_reset_token = '';
@@ -48,6 +52,32 @@ class Employee implements CRUDInterface {
         return $this->$name;
         break;
     }
+  }
+
+  // This function will find an employee by the user_name and return the Employee object. 
+  // If no match is found in the database then an invalid Employee object is returned with an error message. 
+  public static function find_by_user_name($user_name){
+    $db = new Database();
+    $exists = $db->exists(['user_name' => $user_name], 'Employees');
+    if($exists){
+      $query = "SELECT * FROM Employees WHERE user_name = ?";
+      $params = ['user_name' => $user_name];
+      $results = $db->execute_sql_statement($query, $params);
+      if($results[0]){
+        $employee_attributes = $results[1]->fetch_assoc();
+        return new Employee($employee_attributes);
+      }
+    }
+    return new Employee(['errors'=>['Invalid username']]);
+  }
+
+  // returns true or false indicating if the user_name and password are correct.
+  public function authenticate($password){
+    $this->authenticated = password_verify($password, $this->password_digest);
+    if(!$this->authenticated){
+      array_push($this->errors, "Invalid password");
+    }
+    return $this->authenticated;
   }
   
   // Returns the children records. 
@@ -97,8 +127,10 @@ class Employee implements CRUDInterface {
 
   // Params is ['attribute_name'=>value, 'attribute_name'=>value]
   private function set_attributes($params){
-    foreach($params as $attribute_name => $attribute_value){
-      $this->$attribute_name = $attribute_value;
+    if(isset($params)){
+      foreach($params as $attribute_name => $attribute_value){
+        $this->$attribute_name = $attribute_value;
+      }
     }
   }
 
@@ -114,8 +146,6 @@ class Employee implements CRUDInterface {
       while($employee_attributes = $rows->fetch_assoc()){
         array_push($employees, new Employee($employee_attributes));
       }
-    }else{
-      echo "Employee.php line 76"; exit;
     }
     return $employees;
   }

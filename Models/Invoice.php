@@ -21,6 +21,9 @@ class Invoice implements CRUDInterface {
     $this->db = new Database();
     $this->set_attributes($params);
     $this->invoice_exists = isset($this->invoice_id);
+    if(!isset($this->business_id) && isset($_COOKIE['business_id'])){
+      $this->business_id = intval($_COOKIE['business_id']);
+    }
     return $this;
   }
 
@@ -71,7 +74,7 @@ class Invoice implements CRUDInterface {
       $results = $db->execute_sql_statement($query, $params);
       if($results[0]){
         $invoice_attributes = $results[1]->fetch_assoc();
-        return new Customer($invoice_attributes);
+        return new Invoice($invoice_attributes);
 
       }
     }else{
@@ -85,7 +88,6 @@ class Invoice implements CRUDInterface {
     if($has_valid_attributes && !$this->invoice_exists){ 
       //if true then we are saving a new customer
       $query = $this->build_insertion_query();
-
       /////////////////////////////////////////////////////////////////////////////////////////////////////////
       // This needs to be its own function
       $attribute_name_list = $this->get_attribute_names();
@@ -93,6 +95,7 @@ class Invoice implements CRUDInterface {
       foreach($attribute_name_list as $attribute_name){
         $params[$attribute_name] = $this->$attribute_name;
       }
+      var_dump($params);
       /////////////////////////////////////////////////////////////////////////////////////////////////////////
       $results = $this->db->execute_sql_statement($query, $params);
       return $results[0]; 
@@ -131,19 +134,19 @@ class Invoice implements CRUDInterface {
 
   // Returns a boolean indicating whether or not the current state of the object is valid to save in the database. 
   private function has_valid_attributes(){
-    if(!isset($this->due_date) || strlen(trim($this->due_date))){
+    if(!isset($this->due_date) || strlen(trim($this->due_date)) == 0){
       array_push($this->errors, "You must enter a due date.");
     }
 
-    if(!isset($this->sent_date) || strlen(trim($this->sent_date))){
+    if(!isset($this->sent_date) || strlen(trim($this->sent_date)) == 0){
       array_push($this->errors, "You must enter a sent date.");
     }
 
-    if(!isset($this->total) || strlen(trim($this->total))){
-      array_push($this->errors, "You must enter a total.");
+    if(!isset($this->total) || $this->total == 0){
+      array_push($this->errors, "You must enter a total greater than 0.");
     }
 
-    if($this->sent_date < $this->due_date){
+    if($this->sent_date > $this->due_date){
       array_push($this->errors, "The sent date must come before the due date.");
     }
     return count($this->errors) == 0;
