@@ -14,11 +14,13 @@ class Business implements CRUDInterface {
   private $business_name;
   private $business_id;
   private $business_exists;
+  private $is_valid;
 
   public function __construct($params){
     $this->db = new Database();
     $this->set_attributes($params);
     $this->business_exists = isset($this->business_id); //The business_id is only set if the business exists in the database. 
+    $this->is_valid = $this->has_valid_attributes();
     return $this;
   }
 
@@ -56,6 +58,7 @@ class Business implements CRUDInterface {
       $query = "INSERT INTO Businesses (business_name) VALUES(?)";
       $params = ['business_name' => $this->business_name];
       $results = $this->db->execute_sql_statement($query, $params);
+      $this->business_id = $this->db->last_inserted_id;
       //This is a boolean value. This value CAN be false is something goes wrong in the database. 
       // For this reason I don't simply return true. I return what the database returns. 
       return $results[0]; 
@@ -67,8 +70,13 @@ class Business implements CRUDInterface {
 
   // Returns a boolean indicating whether or not the current state of the object is valid to save in the database. 
   private function has_valid_attributes(){
+    $this->errors = []; //Reset the list of errors. 
     if(strlen(trim($this->business_name)) == 0 || strlen(trim($this->business_name)) > 50 ){
       array_push($this->errors, 'Business name must be greater than 0 characters and less than 51 characters.');
+    }
+    $duplicate_business_name = $this->db->exists(['business_name' => $this->business_name], "Businesses");
+    if($duplicate_business_name){
+      array_push($this->errors, 'This business name is already taken.');
     }
     return count($this->errors) == 0;
   }
@@ -95,7 +103,7 @@ class Business implements CRUDInterface {
       case 'inventory':
         return $this->get_child_records(['table'=>'Inventory_items']);
         break;
-        default:
+      default:
         return $this->$name;
         break;
     }

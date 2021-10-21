@@ -12,9 +12,12 @@ class Employee implements CRUDInterface {
   private $password_digest;
   private $password_reset_token; 
   private $is_admin;
-  private $password; //This is set only when we are creating a NEW customer. This will be hashed and stored in the db. 
+  private $password;        //This is set only when we are creating a NEW customer. This will be hashed and stored in the db. 
+  private $verify_password; //This is set only when we are creating a NEW customer. This will be hashed and stored in the db. 
   private $errors = [];
   private $authenticated;
+  private $db;
+  private $is_valid;
 
   private $employee_exists;
 
@@ -40,6 +43,7 @@ class Employee implements CRUDInterface {
     }
 
     $this->password_reset_token = '';
+    $this->is_valid = $this->has_valid_attributes();
     return $this;
   }
 
@@ -183,6 +187,7 @@ class Employee implements CRUDInterface {
       }
       /////////////////////////////////////////////////////////////////////////////////////////////////////////
       $results = $this->db->execute_sql_statement($query, $params);
+      $this->employee_id = $this->db->last_inserted_id;
       return $results[0]; 
       //This is a boolean value. This value CAN be false is something goes wrong in the database. 
       // For this reason I don't simply return true. I return what the database returns. 
@@ -219,6 +224,8 @@ class Employee implements CRUDInterface {
 
   // Returns a boolean indicating whether or not the current state of the object is valid to save in the database. 
   private function has_valid_attributes(){
+    $this->errors = []; //Reset the errors
+
     if(strlen(trim($this->first_name)) == 0 || strlen(trim($this->first_name)) > 20){
       array_push($this->errors, "Employee first name must be greater than 0 characters and less than 21 characters.");
     }
@@ -229,15 +236,30 @@ class Employee implements CRUDInterface {
 
     if(strlen(trim($this->user_name)) == 0 || strlen(trim($this->user_name)) > 50){
       array_push($this->errors, "Employee user name must be greater than 0 characters and less than 21 characters.");
+    }elseif($this->db->exists(['user_name'=>$this->user_name], 'Employees')){
+      array_push($this->errors, "This user name is already in use.");
     }
 
     if(strlen(trim($this->email_address)) == 0 || strlen(trim($this->email_address)) > 20){
       array_push($this->errors, "Employee email address must be greater than 0 characters and less than 51 characters.");
-    }
+    }elseif($this->db->exists(['email_address'=>$this->email_address], 'Employees')){
+      array_push($this->errors, "This email address is already in use.");
+    } 
 
     if(!isset($this->password_digest) && (strlen(trim($this->password)) == 0 || strlen(trim($this->password)) > 20)){
       array_push($this->errors, "Employee password must be greater than 0 characters and less than 21 characters.");
     }
+
+    // If the business_id is not set then that means we are creating a new user and we must perform checks on the password.
+    // If the business_id is set then this check will be skipped. There is no need to check the password. 
+    if(!isset($this->business_id)){
+      if(strlen(trim($this->password)) == 0){
+        array_push($this->errors, "Password is required.");
+      }elseif($this->password != $this->verify_password){
+        array_push($this->errors, "Passwords do not match.");
+      } 
+    }
+
     return count($this->errors) == 0;
   }
 

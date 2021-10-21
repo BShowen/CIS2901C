@@ -26,27 +26,146 @@ if(isset($_SESSION['user_name']) || isset($_SESSION['password'])){
 /*
  This section of code is used when the user is being redirected to this page and there is a status message in the session. This happens when the user uses the form on this page to log in. The form is submitted, a database connection and SQL statement are executed, if the credentials are incorrect then the user is redirected to this page with a status message in the session. 
 */
-
-// $form_errors will be set to an empty array is $employee is not set. It will be set to an array if $employee is set. The array will contain error messages if the $employee object is not valid, otherwise it will be an empty array.
-$form_errors = isset($employee) ? $employee->errors : [] ;
-$error_messages = "";
-if(count($form_errors) > 0){
-  $errors = $employee->errors;
-  foreach($errors as $error_message){
-    $error_messages .= "<h3 class='user_message_text'>$error_message</h3>";
+$messages = ['errors'=>[], 'success'=>[]];
+if(isset($employee)){
+  foreach($employee->errors as $error_message){
+    array_push($messages['errors'], "<h3 class='user_message_text'>$error_message</h3>");
   }
+  $_SESSION['messages'] = $messages;
+}
+
+// type is a string. it should be set to either "errors" or "success"
+function print_message($type){ 
+  foreach($_SESSION['messages'][$type] as $message){
+    echo "<h3 class='user_message_text'> $message </h3>";
+  }
+  $_SESSION['messages'][$type] = [];
+}
+
+$signing_up = False;
+if(isset($_GET['signup'])){
+  $signing_up = boolval($_GET['signup']);
 }
 ?>
 
 <main style='margin-left: 0;margin-top:7rem;'>
   
   <div class='user_message login_message'>
-    <?php if($form_errors){ 
-      echo $error_messages;
-    } ?>
+    <?php 
+      print_message('errors');
+    ?>
+  </div>
+  
+  <!-- Login form -->
+  <div style="width: 400px;margin: 0 auto;">
+    <div class="card">
+      <?php if($signing_up){ ?> 
+        <!-- Render the signup form -->
+          <div class="card_title">
+            <h1>Sign up</h1>
+          </div>
+          <hr class="card_line">
+          <div class="card_details"> 
+            <form action='/businessManager/Controllers/signup.php' method='POST'>
+              <div class="grid_container">
+
+                <div class="grid_item_label">
+                  <label for='user_name'>Business name</label>
+                </div>
+                <div class="grid_item_input">
+                  <input type='text' id='business_name' name='business_name'>
+                </div>
+
+                <div class="grid_item_label">
+                  <label for='user_name'>First name</label>
+                </div>
+                <div class="grid_item_input">
+                  <input type='text' id='first_name' name='first_name'>
+                </div>
+
+                <div class="grid_item_label">
+                  <label for='user_name'>Last name</label>
+                </div>
+                <div class="grid_item_input">
+                  <input type='text' id='last_name' name='last_name'>
+                </div>
+
+                <div class="grid_item_label">
+                  <label for='user_name'>Username</label>
+                </div>
+                <div class="grid_item_input">
+                  <input type='text' id='user_name' name='user_name'>
+                </div>
+
+                <div class="grid_item_label">
+                  <label for='user_name'>Email address</label>
+                </div>
+                <div class="grid_item_input">
+                  <input type='text' id='email_address' name='email_address'>
+                </div>
+                
+                <div class="grid_item_label">
+                  <label for='password'>Password</label>
+                </div>
+                <div class="grid_item_input">
+                  <input type='password' id='password' name='password'>
+                </div>
+                
+                <div class="grid_item_label">
+                  <label for='verify_password'>Verify Password</label>
+                </div>
+                <div class="grid_item_input">
+                  <input type='password' id='verify_password' name='verify_password'>
+                </div>
+                
+                <div class="grid_item_input">
+                  <button type="submit">Submit</button>
+                </div>
+              </div>
+            </form>
+            <div>
+              <p>Already a member? <a href="/businessManager/index.php?signup=0">Login</a></p>
+            </div>
+          </div>
+      <?php }else{ ?>
+          <!-- Render the login form -->
+          <div class="card_title">
+            <h1>Login</h1>
+          </div>
+          <hr class="card_line">
+          <div class="card_details"> 
+            <form action='/businessManager/index.php' method='POST'>
+              <div class="grid_container">
+
+                <div class="grid_item_label">
+                  <label for='user_name'>Username</label>
+                </div>
+                <div class="grid_item_input">
+                  <input type='text' id='user_name' name='user_name'>
+                </div>
+                
+                <div class="grid_item_label">
+                  <label for='password'>Password</label>
+                </div>
+                <div class="grid_item_input">
+                  <input type='password' id='password' name='password'>
+                </div>
+                
+                <div class="grid_item_input">
+                  <button type="submit">Submit</button>
+                </div>
+
+              </div>
+            </form>
+            <div>
+              <p>Not a member? <a href="/businessManager/index.php?signup=1">Signup</a></p>
+            </div>
+          </div>
+        <?php } ?>
+    </div>
   </div>
 
-  <div class="form_container">
+  <!-- <div class="form_container">
     <form action='/businessManager/index.php' method='POST'>
       <div class="form_title">
         <h1>Login</h1>
@@ -71,7 +190,7 @@ if(count($form_errors) > 0){
         </div>
       </div>
     </form>
-  </div>
+  </div> -->
 
 </main>
 

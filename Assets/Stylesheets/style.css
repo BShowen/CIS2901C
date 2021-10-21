@@ -124,6 +124,7 @@ div.show_form_button button {}
   height: max-content;
   transition: height 1s;
   overflow: hidden;
+  border: 1px solid red;
 }
 
 div.form_container form {
@@ -174,7 +175,7 @@ div.form_container form {
   color: white;
 }
 
-.card, form{
+.card{
   background-color: #FFFFFF;
   border-radius: 5px;
   padding: 10px 20px;

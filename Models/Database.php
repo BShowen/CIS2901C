@@ -14,6 +14,9 @@ class Database{
   // possible return values from php's gettype() function. 
   private const ACCEPTED_SQL_TYPES = ['integer', 'double', 'string'];
 
+  // This stores the last inserted id. 
+  private $last_inserted_id;
+
   function __construct(){
     // Require in the config file that holds all of the sensitive data for connecting to mySQL. 
     require __DIR__.'/../.myConfig.php';
@@ -62,11 +65,16 @@ class Database{
         }
       }else{
         $stmt->store_result();
+        $this->last_inserted_id = $stmt->insert_id;
         // Set the $results to reflect whether or not the SQL statement was a success
         $results[0] = True;
       } 
     }
     return $results;
+  }
+
+  public function __get($name){
+    return $this->$name;
   }
 
   // This function queries the database and returns true or false depending if the row exists. 
