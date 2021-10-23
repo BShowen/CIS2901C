@@ -17,7 +17,7 @@ class Employee implements CRUDInterface {
   private $errors = [];
   private $authenticated;
   private $db;
-  private $is_valid;
+  // private $is_valid;
 
   private $employee_exists;
 
@@ -43,7 +43,6 @@ class Employee implements CRUDInterface {
     }
 
     $this->password_reset_token = '';
-    $this->is_valid = $this->has_valid_attributes();
     return $this;
   }
 
@@ -52,6 +51,9 @@ class Employee implements CRUDInterface {
       case 'sales':
         return $this->get_child_records(['table'=>'Sales']);
         break;
+      case 'is_valid':
+        $this->is_valid = $this->has_valid_attributes();
+        return $this->is_valid;
       default:
         return $this->$name;
         break;
@@ -171,7 +173,7 @@ class Employee implements CRUDInterface {
     }
   }
 
-  // Saves the current object in the database. 
+  // Attempts to save the current object to the database. Returns a boolean value. 
   public function save(){
     $has_valid_attributes = $this->has_valid_attributes();
     if($has_valid_attributes && !$this->employee_exists){ 
@@ -245,7 +247,6 @@ class Employee implements CRUDInterface {
     }elseif($this->db->exists(['email_address'=>$this->email_address], 'Employees')){
       array_push($this->errors, "This email address is already in use.");
     } 
-
     if(!isset($this->password_digest) && (strlen(trim($this->password)) == 0 || strlen(trim($this->password)) > 20)){
       array_push($this->errors, "Employee password must be greater than 0 characters and less than 21 characters.");
     }

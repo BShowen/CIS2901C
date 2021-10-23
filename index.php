@@ -29,7 +29,7 @@ if(isset($_SESSION['user_name']) || isset($_SESSION['password'])){
 $messages = ['errors'=>[], 'success'=>[]];
 if(isset($employee)){
   foreach($employee->errors as $error_message){
-    array_push($messages['errors'], "<h3 class='user_message_text'>$error_message</h3>");
+    array_push($messages['errors'], $error_message  );
   }
   $_SESSION['messages'] = $messages;
 }
