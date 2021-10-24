@@ -18,6 +18,7 @@ class Employee implements CRUDInterface {
   private $authenticated;
   private $db;
   // private $is_valid;
+  private $temp_password;
 
   private $employee_exists;
 
@@ -34,15 +35,18 @@ class Employee implements CRUDInterface {
 
     // password_hash will be set if the Employee object was instantiated using find_by_id. 
     // password_hash will NOT be set if the Employee object is new and not yet saved in the DB. 
-    if(isset($this->password)){
-      $this->password_digest = password_hash($this->password, PASSWORD_DEFAULT);
-    }
+    // if(isset($this->password)){
+    //   $this->password_digest = password_hash($this->password, PASSWORD_DEFAULT);
+    // }
 
     if(!isset($this->authenticated) && isset($_COOKIE['authenticated'])){
       $this->authenticated = $_COOKIE['authenticated'];
     }
 
     $this->password_reset_token = '';
+    if(!isset($this->temp_password)){
+      $this->temp_password = '';
+    }
     return $this;
   }
 
@@ -177,6 +181,9 @@ class Employee implements CRUDInterface {
   public function save(){
     $has_valid_attributes = $this->has_valid_attributes();
     if($has_valid_attributes && !$this->employee_exists){ 
+      // Create the password digest before saving the Employee. We know that $this->password is set because 
+      // $this->has_valid_attributes would have returned false otherwise. 
+      $this->password_digest = password_hash($this->password, PASSWORD_DEFAULT);
       //if true then we are saving a new employee
       $query = $this->build_insertion_query();
 
@@ -187,6 +194,7 @@ class Employee implements CRUDInterface {
       foreach($attribute_name_list as $attribute_name){
         $params[$attribute_name] = $this->$attribute_name;
       }
+
       /////////////////////////////////////////////////////////////////////////////////////////////////////////
       $results = $this->db->execute_sql_statement($query, $params);
       $this->employee_id = $this->db->last_inserted_id;
@@ -247,14 +255,16 @@ class Employee implements CRUDInterface {
     }elseif($this->db->exists(['email_address'=>$this->email_address], 'Employees')){
       array_push($this->errors, "This email address is already in use.");
     } 
-    if(!isset($this->password_digest) && (strlen(trim($this->password)) == 0 || strlen(trim($this->password)) > 20)){
+    
+    // if(!isset($this->password_digest) && (strlen(trim($this->password)) == 0 || strlen(trim($this->password)) > 20)){
+    if(strlen(trim($this->password)) == 0 || strlen(trim($this->password)) > 20){
       array_push($this->errors, "Employee password must be greater than 0 characters and less than 21 characters.");
     }
-
+    // echo "password checked";var_dump($this->errors);exit;
     // If the business_id is not set then that means we are creating a new user and we must perform checks on the password.
     // If the business_id is set then this check will be skipped. There is no need to check the password. 
     if(!isset($this->business_id)){
-      if(strlen(trim($this->password)) == 0){
+      if(strlen(trim($this->password)) == 0 && strlen(trim($this->temp_password) == 0)){
         array_push($this->errors, "Password is required.");
       }elseif($this->password != $this->verify_password){
         array_push($this->errors, "Passwords do not match.");
