@@ -2,6 +2,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 :root {
@@ -67,6 +68,7 @@ main {
   align-items: center;
   justify-content: center;
   padding: 15px 15px;
+  font-size: smaller;
 }
 
 .login_message{
@@ -115,8 +117,6 @@ div.show_form_button{
   width: 100%;
 }
 
-div.show_form_button button {}
-
 .form_container{
   display: flex;
   justify-content: center;
@@ -124,11 +124,9 @@ div.show_form_button button {}
   height: max-content;
   transition: height 1s;
   overflow: hidden;
-  border: 1px solid red;
 }
 
 div.form_container form {
-  /* border: 1px solid black; */
   border-radius: 5px;
   padding: 10px;
   margin: 5px 0;
@@ -168,9 +166,6 @@ div.form_container form {
   transition: background-color 2000ms;
 }
 
-.delete_button, .edit_button{ 
-  /* height: var(--table-row-height); */
-}
 .action_button:hover{
   color: white;
 }
@@ -196,6 +191,18 @@ div.form_container form {
   padding: 5px 5px;
 }
 
-.sales_invoice{
-  border: 1px solid red !important;
+#signup_link_container, 
+#sign_in_link_container {
+  margin-top: 1.5rem;
+}
+
+#signup_link_container a, 
+#sign_in_link_container a {
+  color: blue;
+  text-decoration: none;
+}
+
+.authorization_form_container{
+  width: 400px;
+  margin: 13rem auto 0 auto;
 }

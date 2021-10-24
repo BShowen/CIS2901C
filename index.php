@@ -48,16 +48,10 @@ if(isset($_GET['signup'])){
 }
 ?>
 
-<main style='margin-left: 0;margin-top:7rem;'>
-  
-  <div class='user_message login_message'>
-    <?php 
-      print_message('errors');
-    ?>
-  </div>
-  
+<main style='margin-left: 0;'>
+    
   <!-- Login form -->
-  <div style="width: 400px;margin: 0 auto;">
+  <div class="authorization_form_container">
     <div class="card">
       <?php if($signing_up){ ?> 
         <!-- Render the signup form -->
@@ -66,7 +60,7 @@ if(isset($_GET['signup'])){
           </div>
           <hr class="card_line">
           <div class="card_details"> 
-            <form action='/businessManager/Controllers/signup.php' method='POST'>
+            <form action='/businessManager/Controllers/signup.php' method='POST' >
               <div class="grid_container">
 
                 <div class="grid_item_label">
@@ -123,7 +117,7 @@ if(isset($_GET['signup'])){
                 </div>
               </div>
             </form>
-            <div>
+            <div id="sign_in_link_container">
               <p>Already a member? <a href="/businessManager/index.php?signup=0">Login</a></p>
             </div>
           </div>
@@ -134,7 +128,7 @@ if(isset($_GET['signup'])){
           </div>
           <hr class="card_line">
           <div class="card_details"> 
-            <form action='/businessManager/index.php' method='POST'>
+            <form action='/businessManager/index.php' method='POST' class="authentication_form">
               <div class="grid_container">
 
                 <div class="grid_item_label">
@@ -157,7 +151,7 @@ if(isset($_GET['signup'])){
 
               </div>
             </form>
-            <div>
+            <div id="signup_link_container">
               <p>Not a member? <a href="/businessManager/index.php?signup=1">Signup</a></p>
             </div>
           </div>
@@ -165,32 +159,11 @@ if(isset($_GET['signup'])){
     </div>
   </div>
 
-  <!-- <div class="form_container">
-    <form action='/businessManager/index.php' method='POST'>
-      <div class="form_title">
-        <h1>Login</h1>
-      </div>
-      <div class="grid_container">
-        <div class="grid_item_label">
-          <label for='user_name'>Username</label>
-        </div>
-        <div class="grid_item_input">
-          <input type='text' id='user_name' name='user_name'>
-        </div>
-        
-        <div class="grid_item_label">
-          <label for='password'>Password</label>
-        </div>
-         <div class="grid_item_input">
-          <input type='password' id='password' name='password'>
-        </div>
-        
-        <div class="grid_item_input">
-          <button type="submit">Submit</button>
-        </div>
-      </div>
-    </form>
-  </div> -->
+  <div class='user_message login_message'>
+    <?php 
+      print_message('errors');
+    ?>
+  </div>
 
 </main>
 
