@@ -31,8 +31,8 @@ if(isset($employee)){
   foreach($employee->errors as $error_message){
     array_push($messages['errors'], $error_message  );
   }
-  $_SESSION['messages'] = $messages;
 }
+$_SESSION['messages'] = $messages;
 
 // type is a string. it should be set to either "errors" or "success"
 function print_message($type){ 
