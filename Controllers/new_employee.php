@@ -1,30 +1,29 @@
 <?php 
-require __DIR__.'/../Models/Database.php';
+require __DIR__.'/../globalFunctions.php';
+require __DIR__.'/../Models/Message.php';
 require __DIR__.'/../Models/Employee.php';
-$db = new Database();
 
-$params = $_POST;
-$attribute_names = array_keys($params);
-foreach($attribute_names as $attribute_name){
-  $params[$attribute_name] = htmlspecialchars($params[$attribute_name]);
-}
+
+$params = get_filtered_post_params();
+
+// I set the business_id on the server side. If is set the business_id using a hidden form input, then this can lead to problems if a users changes the value of this field before submitting. Its safer to set the business_id on the server side. 
 $params['business_id'] = intval($_COOKIE['business_id']);
+
+// This is a hack. Users should be given temp passwords. Then when they log in they should be instructed to change their password. I have no implemented this yet. So this is my fix for now. 
 $params['password'] = strval($_POST['temp_password']);
-
-// var_dump($params);exit;
-
 
 $employee = new Employee($params);
 
-$messages = ['errors'=>[], 'success'=>[]];
+$messages = [];
 if($employee->save()){
-  array_push($messages['success'], 'Employee successfully added');
+  array_push($messages, new Message("success", "Employee successfully added"));
+  table_has_new_row("true");
 }else{
-  $messages['errors'] = $employee->errors;
+  $errors = $employee->errors;
+  foreach($errors as $error_message){
+    array_push($messages, new Message("error", $error_message));
+  }
 }
-$_SESSION['messages'] = $messages;
-
-Header('Location: http://'.$_SERVER['HTTP_HOST'].'/businessManager/Views/employees.php');
-
-// send a response back to the caller. Success for Failure. 
+set_session_messages($messages);
+redirect_to("employees");
 ?>

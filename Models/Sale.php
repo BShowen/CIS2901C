@@ -1,15 +1,19 @@
 <?php 
 
+require_once __DIR__.'/Database.php';
 require_once __DIR__.'/CRUDInterface.php';
 
 class Sale implements CRUDInterface {
 
-  private $sale_id;
+  // These are the attributes that you will find in the database. 
+  private $sale_id; 
   private $customer_id;
   private $employee_id;
   private $business_id;
   private $sale_total; 
   private $sale_date;
+
+  // These are attributes use to implement business logic. 
   private $sale_exists; 
   private $errors = [];
   private $db;
@@ -55,9 +59,10 @@ class Sale implements CRUDInterface {
     }
   }
 
-  // Returns the children records. 
-  // $params determines what children are returned. For example, if $params = ['table'=>'Employees']
-  // then a list of children Employee objects is returned. 
+  /* 
+    Returns the children records. 
+   $params determines what children are returned. For example, if $params = ['table'=>'Employees'] then a list of children Employee objects is returned. 
+  */
   private function get_child_records($params){
     $child_type = substr($params['table'], 0, strlen($params['table']) - 1);
     $child_table = $params['table'];
@@ -100,6 +105,7 @@ class Sale implements CRUDInterface {
     return $child_records;  
   }
 
+  // Returns all of the sales associated with this business. 
   public static function all(){
     $database = new Database();
     $query = "SELECT * FROM Sales where business_id = ?";
@@ -116,6 +122,7 @@ class Sale implements CRUDInterface {
     return $sales;
   }
 
+  // Returns a sales object or throws an error if a sale is not found. 
   public static function find_by_id($id){
     $db = new Database();
     $exists = $db->exists(['sale_id' => $id], 'Sales');
@@ -133,6 +140,7 @@ class Sale implements CRUDInterface {
     }
   }
 
+  // Attempts to save a record in the database. Returns true or false. 
   public function save(){
     $has_valid_attributes = $this->has_valid_attributes();
     if($has_valid_attributes && !$this->sale_exists){ 
@@ -159,6 +167,7 @@ class Sale implements CRUDInterface {
     return False; 
   }
 
+  // This will update a record in the database. Returns true or false. 
   private function update(){
     $params = ['sale_id'=>$this->sale_id];
     $attribute_names = $this->get_attribute_names();

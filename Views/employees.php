@@ -1,45 +1,33 @@
 <?php 
+require __DIR__."/../globalFunctions.php";
+require __DIR__."/../Models/Message.php";
 require __DIR__."/../Models/Page.php";
 $page = new Page();
 
-$has_error_message = isset($_SESSION['messages']['errors']) ? count($_SESSION['messages']['errors']) > 0 : 0;
-$has_success_message = isset($_SESSION['messages']['success']) ? count($_SESSION['messages']['success']) > 0 : 0;
-
 $employees = Employee::all();
+$last_row = count($employees);
+$current_row = 0;
 $table_rows = "";
 if(!empty($employees)){
   foreach($employees as $employee){
-    $table_rows.="<tr>
-    <td>$employee->first_name</td>
-    <td>$employee->last_name</td>
-    <td>$employee->user_name</td>
-    <td>$employee->email_address</td>
+    $current_row++;
+    if(($current_row == $last_row) && table_has_new_row()){
+      $table_rows.="<tr class='new_row'>";
+    }else{
+      $table_rows.="<tr>";
+    } 
+    $table_rows.="<td>$employee->first_name</td>
+      <td>$employee->last_name</td>
+      <td>$employee->user_name</td>
+      <td>$employee->email_address</td>
     </tr>";
   }
-}
-
-// This variable is used to determine if the form for adding new users can be rendered. 
-$current_user_is_admin = Employee::find_by_id(intval($_COOKIE['employee_id']))->is_admin;
-
-// type is a string. it should be set to either "errors" or "success"
-function print_message($type){ 
-  foreach($_SESSION['messages'][$type] as $message){
-    echo "<h3 class='user_message_text'> $message </h3>";
-  }
-  $_SESSION['messages'][$type] = [];
 }
 ?>
 
 <main>
-<div class="user_message">
-    <?php 
-    if($has_error_message){   
-      print_message('errors');
-    }
-    if($has_success_message){
-      print_message('success');
-    }
-    ?>
+  <div class="user_message">
+    <?php display_session_messages(); ?>
   </div>
   
   <div class="table_container">
@@ -59,7 +47,7 @@ function print_message($type){
     </table>
   </div>
 
-  <?php if($current_user_is_admin){ ?>
+  <?php if(current_logged_in_employee()->is_admin){ ?>
     <div class="show_form_button">
       <button class="show_form collapsed">New employee</button>
     </div>

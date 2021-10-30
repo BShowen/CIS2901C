@@ -3,6 +3,7 @@ require_once __DIR__.'/CRUDInterface.php';
 require_once __DIR__.'/Database.php';
 class Employee implements CRUDInterface {
 
+  // These are the attributes that you will find in the database. 
   private $employee_id;
   private $business_id;
   private $first_name;
@@ -12,41 +13,18 @@ class Employee implements CRUDInterface {
   private $password_digest;
   private $password_reset_token; 
   private $is_admin;
+  private $temp_password;
+  
+  // These are attributes that are used for business logic. 
   private $password;        //This is set only when we are creating a NEW customer. This will be hashed and stored in the db. 
   private $verify_password; //This is set only when we are creating a NEW customer. This will be hashed and stored in the db. 
   private $errors = [];
-  private $authenticated;
+  // private $authenticated;
   private $db;
-  // private $is_valid;
-  private $temp_password;
-
-  private $employee_exists;
 
   public function __construct($params){
     $this->db = new Database();
     $this->set_attributes($params);
-    $this->employee_exists = isset($this->employee_id); //The employee_id is only set if the customer exists in the database. 
-    // business_id will be set if the Employee object was instantiated using find_by_id. 
-    // business_id will NOT be set if the Employee object is new and not yet saved in the DB. 
-    // Either way, it is imperative that business_id be set. 
-    if(!isset($this->business_id) && isset($_COOKIE['business_id'])){
-      $this->business_id = $_COOKIE['business_id'];
-    }
-
-    // password_hash will be set if the Employee object was instantiated using find_by_id. 
-    // password_hash will NOT be set if the Employee object is new and not yet saved in the DB. 
-    // if(isset($this->password)){
-    //   $this->password_digest = password_hash($this->password, PASSWORD_DEFAULT);
-    // }
-
-    if(!isset($this->authenticated) && isset($_COOKIE['authenticated'])){
-      $this->authenticated = $_COOKIE['authenticated'];
-    }
-
-    $this->password_reset_token = '';
-    if(!isset($this->temp_password)){
-      $this->temp_password = '';
-    }
     return $this;
   }
 
@@ -65,7 +43,7 @@ class Employee implements CRUDInterface {
   }
 
   // This function will find an employee by the user_name and return the Employee object. 
-  // If no match is found in the database then an invalid Employee object is returned with an error message. 
+  // If no match is found in the database then an Error is thrown.  
   public static function find_by_user_name($user_name){
     $db = new Database();
     $exists = $db->exists(['user_name' => $user_name], 'Employees');
@@ -78,16 +56,22 @@ class Employee implements CRUDInterface {
         return new Employee($employee_attributes);
       }
     }
-    return new Employee(['errors'=>['Invalid username']]);
+    throw new Error("Invalid username");
+    // return new Employee(['errors'=>['Invalid username']]);
   }
 
   // returns true or false indicating if the user_name and password are correct.
   public function authenticate($password){
-    $this->authenticated = password_verify($password, $this->password_digest);
-    if(!$this->authenticated){
-      array_push($this->errors, "Invalid password");
+    // $this->authenticated = password_verify($password, $this->password_digest);
+    // if(!$this->authenticated){
+    //   array_push($this->errors, "Invalid password");
+    // }
+    // return $this->authenticated;
+    if(password_verify($password, $this->password_digest)){
+      return true;
+    }else{
+      throw new Error("Invalid password");
     }
-    return $this->authenticated;
   }
   
   // Returns the children records. 
@@ -138,8 +122,25 @@ class Employee implements CRUDInterface {
   // Params is ['attribute_name'=>value, 'attribute_name'=>value]
   private function set_attributes($params){
     if(isset($params)){
+      // This loop will set the attributes that were passed in. 
       foreach($params as $attribute_name => $attribute_value){
         $this->$attribute_name = $attribute_value;
+      }
+      
+      // Any attributes that were not set will now be set to their default values.   
+
+      // The business_id is needs to be set. 
+      if(!isset($this->business_id) && isset($_COOKIE['business_id'])){
+        $this->business_id = $_COOKIE['business_id'];
+      }
+
+      // if(!isset($this->authenticated) && isset($_COOKIE['authenticated'])){
+      //   $this->authenticated = $_COOKIE['authenticated'];
+      // }
+
+      $this->password_reset_token = '';
+      if(!isset($this->temp_password)){
+        $this->temp_password = '';
       }
     }
   }
@@ -250,7 +251,7 @@ class Employee implements CRUDInterface {
       array_push($this->errors, "This user name is already in use.");
     }
 
-    if(strlen(trim($this->email_address)) == 0 || strlen(trim($this->email_address)) > 20){
+    if(strlen(trim($this->email_address)) == 0 || strlen(trim($this->email_address)) > 50){
       array_push($this->errors, "Employee email address must be greater than 0 characters and less than 51 characters.");
     }elseif($this->db->exists(['email_address'=>$this->email_address], 'Employees')){
       array_push($this->errors, "This email address is already in use.");

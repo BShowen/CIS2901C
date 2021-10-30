@@ -1,21 +1,25 @@
 <?php
-require __DIR__.'/../Models/Database.php';
+require __DIR__.'/../globalFunctions.php';
+require __DIR__.'/../Models/Message.php';
 require __DIR__.'/../Models/Sale.php';
-$db = new Database();
 
-$params = $_POST;
+$params = get_filtered_post_params();
 $params['customer_id'] = intval($params['customer_id']);
 $params['sale_total'] = doubleval($params['sale_total']);
 $params['employee_id'] = intval($_COOKIE['employee_id']);
 $sale = new Sale($params);
-$messages = ['errors'=>[], 'success'=>[]];
+$messages = [];
 if($sale->save()){
-  array_push($messages['success'], 'Sale successfully added');
+  array_push( $messages, new Message("success", "Sale successfully added") );
+  table_has_new_row(true);
 }else{
-  $messages['errors'] = $sale->errors;
+  $errors = $sale->errors;
+  foreach($errors as $error_message){
+    array_push( $messages, new Message("error", $error_message) );
+  }
 }
 
-$_SESSION['messages'] = $messages;
+set_session_messages($messages);
 
-Header('Location: http://'.$_SERVER['HTTP_HOST'].'/businessManager/Views/sales.php');
+redirect_to("sales");
 ?>

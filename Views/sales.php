@@ -1,10 +1,8 @@
 <?php 
+require __DIR__."/../globalFunctions.php";
+require __DIR__."/../Models/Message.php";
 require __DIR__."/../Models/Page.php";
 $page = new Page();
-$db = new Database();
-
-$has_error_message = isset($_SESSION['messages']['errors']) ? count($_SESSION['messages']['errors']) > 0 : 0;
-$has_success_message = isset($_SESSION['messages']['success']) ? count($_SESSION['messages']['success']) > 0 : 0;
 
 $sales = Sale::all();
 $last_row = count($sales);
@@ -12,7 +10,7 @@ $current_row = 0;
 $table_rows = "";
 foreach($sales as $sale){
   $current_row++;
-  if($has_success_message && ($current_row == $last_row)){
+  if( ($current_row == $last_row) && table_has_new_row() ){
     $table_rows.="<tr class='new_row' data-href='/businessManager/Views/sale.php?sale_id=$sale->sale_id'>";
   }else{
     $table_rows.="<tr data-href='/businessManager/Views/sale.php?sale_id=$sale->sale_id'>";
@@ -38,25 +36,10 @@ foreach($customers as $customer){
   $customer_full_name = $customer->first_name." ".$customer->last_name;
   $customer_selection_list .= "<option value=$customer->customer_id>$customer_full_name</option>";
 }
-
-// type is a string. it should be set to either "errors" or "success"
-function print_message($type){ 
-  foreach($_SESSION['messages'][$type] as $message){
-    echo "<h3 class='user_message_text'> $message </h3>";
-  }
-  $_SESSION['messages'][$type] = [];
-}
 ?>
 <main>
   <div class="user_message">
-    <?php 
-    if($has_error_message){   
-      print_message('errors');
-    }
-    if($has_success_message){
-      print_message('success');
-    }
-    ?>
+    <?php display_session_messages(); ?>
   </div>
 
   <div class="table_container">

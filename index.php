@@ -1,47 +1,10 @@
 <?php
+require __DIR__.'/globalFunctions.php';
 require __DIR__.'/Models/Page.php';
+require __DIR__.'/Models/Message.php';
 $page = new Page();
 
-if(isset($_POST['user_name']) && isset($_POST['password'])){
-  $_SESSION['user_name'] = $_POST['user_name'];
-  $_SESSION['password'] = $_POST['password'];
-  Header("Location: http://".$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']);
-  exit;
-}
-
-$employee;
-if(isset($_SESSION['user_name']) || isset($_SESSION['password'])){
-  $user_name = strval($_SESSION['user_name']);
-  $password = strval($_SESSION['password']);
-  session_unset();
-  $employee = Employee::find_by_user_name($user_name);
-  if($employee->employee_exists && $employee->authenticate($password)){
-    setcookie('employee_id', strval($employee->employee_id), 0, "/" );
-    setcookie('authenticated', '1', 0, "/" );
-    setcookie('business_id', strval($employee->business_id), 0, "/" );
-    Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/dashboard.php");
-  }
-}
-
-/*
- This section of code is used when the user is being redirected to this page and there is a status message in the session. This happens when the user uses the form on this page to log in. The form is submitted, a database connection and SQL statement are executed, if the credentials are incorrect then the user is redirected to this page with a status message in the session. 
-*/
-$messages = ['errors'=>[], 'success'=>[]];
-if(isset($employee)){
-  foreach($employee->errors as $error_message){
-    array_push($messages['errors'], $error_message  );
-  }
-}
-$_SESSION['messages'] = $messages;
-
-// type is a string. it should be set to either "errors" or "success"
-function print_message($type){ 
-  foreach($_SESSION['messages'][$type] as $message){
-    echo "<h3 class='user_message_text'> $message </h3>";
-  }
-  $_SESSION['messages'][$type] = [];
-}
-
+// This variable is used to determine which form to render on this page. 
 $signing_up = False;
 if(isset($_GET['signup'])){
   $signing_up = boolval($_GET['signup']);
@@ -128,7 +91,7 @@ if(isset($_GET['signup'])){
           </div>
           <hr class="card_line">
           <div class="card_details"> 
-            <form action='/businessManager/index.php' method='POST' class="authentication_form">
+            <form action='/businessManager/Controllers/login.php' method='POST' class="authentication_form">
               <div class="grid_container">
 
                 <div class="grid_item_label">
@@ -161,7 +124,7 @@ if(isset($_GET['signup'])){
 
   <div class='user_message login_message'>
     <?php 
-      print_message('errors');
+    display_session_messages();
     ?>
   </div>
 

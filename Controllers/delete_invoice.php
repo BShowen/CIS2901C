@@ -1,17 +1,19 @@
 <?php
-require __DIR__.'/../Models/Database.php';
+require __DIR__.'/../Models/Message.php';
+require __DIR__.'/../globalFunctions.php';
 require __DIR__.'/../Models/Invoice.php';
-$db = new Database();
 
 $invoice = Invoice::find_by_id($_GET['invoice_id']);
 
-$messages = ['errors'=>[], 'success'=>[]];
+$messages = [];
 if($invoice->delete()){
-  array_push($messages['success'], 'Invoice successfully deleted.');
+  array_push($messages, new Message("success", "Invoice successfully deleted."));
 }else{
-  $messages['errors'] = $invoice->errors;
+ foreach($invoice->errors as $error_message){
+   array_push($messages, new Message("error", $error_message));
+ }
 }
-$_SESSION['messages'] = $messages;
+set_session_messages($messages);
 
 // Refer the user back to the page they were on. 
 $referer = $_SERVER['HTTP_REFERER'];

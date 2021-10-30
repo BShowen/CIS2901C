@@ -1,7 +1,8 @@
 <?php 
+require __DIR__."/../Models/Message.php";
+require __DIR__."/../globalFunctions.php";
 require __DIR__."/../Models/Page.php";
 $page = new Page();
-$db = new Database();
 
 define('CUSTOMER_ID', intval($_GET['customer_id']));
 $customer = Customer::find_by_id(CUSTOMER_ID);
@@ -10,12 +11,8 @@ $create_invoice = isset($_GET['new_invoice']) ? intval($_GET['new_invoice']) : 0
 $invoices_requested = isset($_GET['sale_id']) && !$create_invoice;
 $sales_table_rows = "";
 $invoice_table_rows = "";
-
-$has_error_message = isset($_SESSION['messages']['errors']) ? count($_SESSION['messages']['errors']) > 0 : 0;
-$has_success_message = isset($_SESSION['messages']['success']) ? count($_SESSION['messages']['success']) > 0 : 0;
  
 // Create table rows for each sale.
-
 forEach($sales as $sale){
   $sales_table_rows .= "
   <tr 
@@ -43,7 +40,7 @@ if($invoices_requested){
     $last_row = count($invoices);
     forEach($invoices as $invoice){
       $current_row++;
-      if($has_success_message && ($current_row == $last_row)){
+      if($current_row == $last_row && table_has_new_row()){
         $invoice_table_rows.="<tr class='new_row'>";
       }else{
         $invoice_table_rows.="<tr>";
@@ -62,34 +59,19 @@ if($invoices_requested){
     }
   }else{
     $invoices_requested = False;
-    $has_error_message = True;
-    $errors = $sale->errors;
-    foreach($errors as $message){
-      array_push($_SESSION['messages']['errors'], $message);
+    $messages = [];
+    foreach($sale->errors as $error_message){
+      array_push($messages, new Message("error", $error_message));
     }
+    set_session_messages($messages);
   }
-}
-
-// Type is a string. it should be set to either "errors" or "success"
-function print_message($type){ 
-  foreach($_SESSION['messages'][$type] as $message){
-    echo "<h3 class='user_message_text'> $message </h3>";
-  }
-  $_SESSION['messages'][$type] = [];
 }
 ?>
 
 <main>
 
   <div class="user_message">
-    <?php 
-    if($has_error_message){   
-      print_message('errors');
-    }
-    if($has_success_message){
-      print_message('success');
-    }
-    ?>
+    <?php display_session_messages(); ?>
   </div>
   
   <div class="card">

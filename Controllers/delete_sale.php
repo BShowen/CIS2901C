@@ -1,19 +1,22 @@
 <?php 
-require __DIR__.'/../Models/Database.php';
+require __DIR__.'/../globalFunctions.php';
+require __DIR__.'/../Models/Message.php';
 require __DIR__.'/../Models/Sale.php';
 require __DIR__.'/../Models/SaleItem.php'; //This object is used internally by Sale. This statement is required.
-$db = new Database();
 
 $sale_id =  intval($_GET['sale_id']);
 $sale = Sale::find_by_id($sale_id);
 
-$messages = ['errors'=>[], 'success'=>[]];
+$messages = [];
 if($sale->delete()){
-  array_push($messages['success'], 'Sale successfully deleted.');
+  array_push( $messages, new Message("success", "Sale successfully deleted.") );
 }else{
-  $messages['errors'] = $sale->errors;
+  $errors = $sale->errors;
+  foreach($errors as $error_message){
+    array_push( $messages, new Message("error", $error_message) );
+  }
 }
-$_SESSION['messages'] = $messages;
+set_session_messages($messages);
 
 // Refer the user back to the page they were on.
 $referer = $_SERVER['HTTP_REFERER'];

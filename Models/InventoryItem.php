@@ -1,6 +1,7 @@
 <?php 
 
 require_once __DIR__.'/CRUDInterface.php';
+require_once __DIR__.'/Database.php';
 
 class InventoryItem implements CRUDInterface {
 

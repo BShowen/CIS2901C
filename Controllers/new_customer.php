@@ -1,25 +1,22 @@
 <?php 
-require __DIR__.'/../Models/Database.php';
+require __DIR__.'/../globalFunctions.php';
+require __DIR__.'/../Models/Message.php';
 require __DIR__.'/../Models/Customer.php';
-$db = new Database();
 
-$params = $_POST;
-$attribute_names = array_keys($params);
-foreach($attribute_names as $attribute_name){
-  $params[$attribute_name] = htmlspecialchars($params[$attribute_name]);
-}
+$params = get_filtered_post_params();
 $params['zip'] = intval($params['zip']);
 
 $customer = new Customer($params);
-$messages = ['errors'=>[], 'success'=>[]];
+$messages = [];
 if($customer->save()){
-  array_push($messages['success'], 'Customer successfully added');
+  array_push($messages, new Message("success", "Customer successfully added"));
+  table_has_new_row("true");
 }else{
-  $messages['errors'] = $customer->errors;
+  $errors = $customer->errors;
+  foreach($errors as $error_message){
+    array_push($messages, new Message("error", $error_message));
+  }
 }
-$_SESSION['messages'] = $messages;
-
-Header('Location: http://'.$_SERVER['HTTP_HOST'].'/businessManager/Views/customers.php');
-
-// send a response back to the caller. Success for Failure. 
+set_session_messages($messages);
+redirect_to("customers");
 ?>

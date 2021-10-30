@@ -1,18 +1,20 @@
 <?php
-require __DIR__.'/../Models/Database.php';
+require __DIR__.'/../globalFunctions.php';
+require __DIR__.'/../Models/Message.php';
 require __DIR__.'/../Models/InventoryItem.php';
-$db = new Database();
 
 $item_id = intval($_GET['item_id']);
 $item = InventoryItem::find_by_id($item_id);
 
-$messages = ['errors'=>[], 'success'=>[]];
+$messages = [];
 if($item->delete()){
-  array_push($messages['success'], 'Item successfully deleted.');
+  array_push( $messages, new Message("success", "Item successfully deleted.") );
 }else{
-  $messages['errors'] = $item->errors;
+  $errors = $item->errors;
+  foreach($errors as $error_message){
+    array_push($messages, new Message("error", $error_message));
+  }
 }
-$_SESSION['messages'] = $messages;
-
-Header('Location: http://'.$_SERVER['HTTP_HOST'].'/businessManager/Views/inventory.php');
+set_session_messages($messages);
+redirect_to("inventory");
 ?>

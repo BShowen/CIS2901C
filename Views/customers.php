@@ -1,9 +1,8 @@
 <?php 
+require __DIR__."/../globalFunctions.php";
+require __DIR__."/../Models/Message.php";
 require __DIR__."/../Models/Page.php";
 $page = new Page();
-
-$has_error_message = isset($_SESSION['messages']['errors']) ? count($_SESSION['messages']['errors']) > 0 : 0;
-$has_success_message = isset($_SESSION['messages']['success']) ? count($_SESSION['messages']['success']) > 0 : 0;
 
 $customers = Customer::all();
 $last_row = count($customers);
@@ -11,7 +10,7 @@ $current_row = 0;
 $table_rows = "";
 foreach($customers as $customer){
   $current_row++;
-  if($has_success_message && ($current_row == $last_row)){
+  if(($current_row == $last_row) && table_has_new_row()){
     $table_rows.="<tr class='new_row clickable' data-href='/businessManager/Views/customer.php?customer_id=$customer->customer_id'>";
   }else{
     $table_rows.="<tr class='clickable' data-href='/businessManager/Views/customer.php?customer_id=$customer->customer_id'>";
@@ -24,30 +23,14 @@ foreach($customers as $customer){
     <td class='zip'>$customer->zip</td>
     <td class='action_buttons'>
       <a class='action_button' href='/businessManager/Controllers/delete_customer.php?customer_id=$customer->customer_id'>Delete</a> <!-- | 
-       <a class='action_button' data-id='$customer->customer_id' href='/businessManager'>Edit</a> -->
+      <a class='action_button' data-id='$customer->customer_id' href='/businessManager'>Edit</a> -->
     </td>
   </tr>";
-}
-
-
-// type is a string. it should be set to either "errors" or "success"
-function print_message($type){ 
-  foreach($_SESSION['messages'][$type] as $message){
-    echo "<h3 class='user_message_text'> $message </h3>";
-  }
-  $_SESSION['messages'][$type] = [];
 }
 ?>
 <main>
   <div class="user_message">
-    <?php 
-    if($has_error_message){   
-      print_message('errors');
-    }
-    if($has_success_message){
-      print_message('success');
-    }
-    ?>
+    <?php display_session_messages(); ?>
   </div>
 
   <div class="table_container">

@@ -1,5 +1,7 @@
 <?php 
 
+require __DIR__.'/../globalFunctions.php';
+require __DIR__.'/../Models/Message.php';
 require __DIR__.'/../Models/Database.php';
 require __DIR__.'/../Models/Business.php';
 require __DIR__.'/../Models/Employee.php';
@@ -23,11 +25,8 @@ if($business->is_valid){
   if($employee->is_valid){
     $employee->business_id = $business->business_id;
     if($employee->save()){
-      // log the user in and redirect to dashboard.
-      setcookie('employee_id', strval($employee->employee_id), 0, "/" );
-      setcookie('authenticated', '1', 0, "/" );
-      setcookie('business_id', strval($employee->business_id), 0, "/" );
-      Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/dashboard.php");
+      set_employee_cookie($employee);
+      redirect_to("dashboard");
       exit;
     }
   }
@@ -37,35 +36,22 @@ if($business->is_valid){
   If the user decides to close the browser then we have an orphaned business object in the database. We need to delete the business
   object.
   */
-  $query = "DELETE FROM Businesses WHERE business_id = ?";
-  $params = ['business_id'=>$business->business_id];
-  $db = new Database();
-  $db->execute_sql_statement($query, $params);
+  $business->delete();
 }
 
 /*
 If this is reached then either the business or the employee object was not valid to be saved. 
 We need to set the appropriate error messages and redirect the user back to the form. 
 */
-set_error_messages($business, $employee);
-Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/index.php?signup=1");
-exit;
-
-
-/*
-This helper function takes in the two objects from this script ($employee, and $business) and retrieves the error messages 
-from each object, if any. 
-*/
-function set_error_messages($business, $employee){
-  $errors = array_merge(
-    $business->is_valid ? [] : $business->errors, 
-    $employee->is_valid ? [] : $employee->errors
-  );
-
-  $messages = ['errors'=>[], 'success'=>[]];
-  foreach($errors as $message){
-    array_push($messages['errors'], $message);
-  }
-  $_SESSION['messages'] = $messages;
+$messages = [];
+$errors = array_merge(
+  $business->is_valid ? [] : $business->errors, 
+  $employee->is_valid ? [] : $employee->errors
+);
+foreach($errors as $message){
+  array_push($messages, new Message("error", $message));
 }
+set_session_messages($messages);
+redirect_to("signup");
+exit;
 ?>

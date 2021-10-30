@@ -19,7 +19,8 @@ class Page {
       $current_employee = Employee::find_by_id(intval($_COOKIE['employee_id']));
     }
     
-    if(isset($current_employee) && $current_employee->authenticated && basename($_SERVER['SCRIPT_FILENAME'], '.php') == 'index'){
+    // if(isset($current_employee) && $current_employee->authenticated && basename($_SERVER['SCRIPT_FILENAME'], '.php') == 'index'){
+    if(isset($current_employee) && basename($_SERVER['SCRIPT_FILENAME'], '.php') == 'index'){
       header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/dashboard.php");
     }else if(!isset($current_employee)){
       $this->redirect_to_login();
