@@ -104,6 +104,9 @@ table, th, td {
 
 tr:hover {
   background-color: lightgrey;
+}
+
+tr.clickable{
   cursor: pointer;
 }
 

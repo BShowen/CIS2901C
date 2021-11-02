@@ -101,4 +101,14 @@ function get_filtered_post_params(){
   } 
   return $params;
 }
+
+// This function returns all of the attributes from $_GET, but filters them through htmlspecialchars() first. 
+function get_filtered_get_params(){
+  $params = [];
+  $attribute_names = array_keys($_GET);
+  foreach($attribute_names as $attribute_name){
+    $params[$attribute_name] = htmlspecialchars($_GET[$attribute_name]);
+  } 
+  return $params;
+}
 ?>

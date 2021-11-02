@@ -8,6 +8,13 @@ $employees = Employee::all();
 $last_row = count($employees);
 $current_row = 0;
 $table_rows = "";
+$admin_user = current_logged_in_employee()->is_admin;
+
+$id1 = intval(current_logged_in_employee()->employee_id);
+$id2 = intval($_COOKIE['employee_id']);
+echo $id1 == $id2 ? "true" : "false";
+
+
 if(!empty($employees)){
   foreach($employees as $employee){
     $current_row++;
@@ -16,19 +23,31 @@ if(!empty($employees)){
     }else{
       $table_rows.="<tr>";
     } 
-    $table_rows.="<td>$employee->first_name</td>
-      <td>$employee->last_name</td>
-      <td>$employee->user_name</td>
-      <td>$employee->email_address</td>
-    </tr>";
+    if($admin_user && (intval(current_logged_in_employee()->employee_id) != intval($employee->employee_id))){
+      $table_rows.="<td>$employee->first_name</td>
+        <td>$employee->last_name</td>
+        <td>$employee->user_name</td>
+        <td>$employee->email_address</td>
+        <td class='action_buttons'>
+          <a class='action_button' href='/businessManager/Controllers/delete_employee.php?employee_id={$employee->employee_id}'>Delete</a>
+        </td>
+      </tr>";
+    }else{
+      $table_rows.="<td>$employee->first_name</td>
+        <td>$employee->last_name</td>
+        <td>$employee->user_name</td>
+        <td>$employee->email_address</td>
+      </tr>";
+    }
   }
 }
 ?>
 
 <main>
-  <div class="user_message">
-    <?php display_session_messages(); ?>
-  </div>
+ 
+  <?php
+    require __DIR__.'/partials/_user_message.php';
+  ?>
   
   <div class="table_container">
     <table>
@@ -39,6 +58,9 @@ if(!empty($employees)){
           <th scope="col">Last name</th>
           <th scope="col">User name</th>
           <th scope="col">Email address</th>
+          <?php if($admin_user){
+            echo "<th scope='col'>Action</td>";
+          }?>
         </tr>
       </thead>
       <tbody>
@@ -47,7 +69,7 @@ if(!empty($employees)){
     </table>
   </div>
 
-  <?php if(current_logged_in_employee()->is_admin){ ?>
+  <?php if($admin_user){ ?>
     <div class="show_form_button">
       <button class="show_form collapsed">New employee</button>
     </div>
@@ -104,7 +126,7 @@ if(!empty($employees)){
           </div>
 
           <div class="right_container">
-            <input type="submit">
+            <button type="submit">Save</button>
           </div>
         </div>
       </form>
