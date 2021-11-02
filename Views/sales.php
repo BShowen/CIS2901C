@@ -70,30 +70,30 @@ foreach($customers as $customer){
         <h1>New Sale</h1>
       </div>
       <div class="grid_container">
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="customer">Customer</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <select name="customer_id" id="customer">
             <?php echo $customer_selection_list; ?>
           </select>
         </div>
 
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="total">Sale total</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <input type="number" id="total" name="sale_total" min="0" step=".01">
         </div>
 
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="date">Sale date</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <input type="date" id="date" name="sale_date">
         </div>
 
-        <div class="grid_item_input">
+        <div class="right_container">
           <button type="submit">Submit</button>      
         </div>
 

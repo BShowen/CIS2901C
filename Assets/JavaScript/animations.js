@@ -2,6 +2,8 @@ window.onload = ()=>{
   formAnimation();
   tableAnimation();
   clickableTableRows();
+  editCustomerDetailsBUtton();
+  cancelCustomerEditForm();
 }
 
 function formAnimation(){
@@ -63,8 +65,39 @@ function clickableTableRows(){
   clickableRows.forEach((row)=>{
     row.addEventListener('click', (event)=>{
       const host = window.location.origin; //get the host name. For example "https://localHost:8080"
-      const newPathName = row.dataset.href //get the redirect link. 
+      const newPathName = row.dataset.href; //get the redirect link. 
       window.location.href = host + newPathName; //redirect the user. 
     });
   });
+}
+
+/* 
+  This function gets the edit button from the customer page and redirects the user to the same page with a query parameter to show the form. 
+*/
+function editCustomerDetailsBUtton(){
+  const editButton = document.querySelector('#edit_customer_details');
+  if(editButton){
+    editButton.addEventListener('click', ()=>{ 
+        const host = window.location.origin; //get the host name. For example "https://localHost:8080"
+        const newPathName = editButton.dataset.url; //get the url from the data- attribute on the element. 
+        window.location.href = host + newPathName; //redirect the user. 
+    });
+  }
+}
+
+/* 
+  This function gets the cancel button from the customer page and cancels the form submission by redirecting the user back to the same page with a query parameter removed, which toggles the form off. 
+*/
+function cancelCustomerEditForm(){
+  const cancelButton = document.querySelector('#cancel');
+  if(cancelButton){
+    cancelButton.addEventListener('click', (e)=>{ 
+      let url = window.location.href;
+      if(url.includes('&edit=1')){
+        url = url.replace('&edit=1', '');
+      }
+      window.location.href = url; //redirect the user. 
+      e.preventDefault();
+    });
+  }
 }

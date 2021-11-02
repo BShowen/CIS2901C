@@ -58,52 +58,52 @@ if(!empty($employees)){
           <h1>New employee</h1>
         </div>
         <div class="grid_container">
-          <div class="grid_item_label">
+          <div class="left_container">
             <label for="first_name">First name</label>
           </div>
-          <div class="grid_item_input">
+          <div class="right_container">
             <input type="text" id="first_name" name="first_name">
           </div>
 
-          <div class="grid_item_label">
+          <div class="left_container">
             <label for="last_name">Last name</label>
           </div>
-          <div class="grid_item_input">
+          <div class="right_container">
             <input type="text" id="last_name" name="last_name">
           </div>
 
-          <div class="grid_item_label">
+          <div class="left_container">
             <label for="street_address">User name</label>
           </div>
-          <div class="grid_item_input">
+          <div class="right_container">
             <input type="text" id="user_name" name="user_name">
           </div>
 
-          <div class="grid_item_label">
+          <div class="left_container">
             <label for="city">Email address</label>
           </div>
-          <div class="grid_item_input">
+          <div class="right_container">
             <input type="text" id="email_address" name="email_address">
           </div>
 
-          <div class="grid_item_label">
+          <div class="left_container">
             <label for="city">Password</label>
           </div>
-          <div class="grid_item_input">
+          <div class="right_container">
             <input type="password" id="temp_password" name="temp_password">
           </div>
 
-          <div class="grid_item_label">
+          <div class="left_container">
             <label for="is_admin">Employee is admin?</label>
           </div>
-          <div class="grid_item_input"> 
+          <div class="right_container"> 
             <select id="is_admin" name="is_admin">
               <option value="0">No</option>
               <option value="1">Yes</option>
             </select>
           </div>
 
-          <div class="grid_item_input">
+          <div class="right_container">
             <input type="submit">
           </div>
         </div>

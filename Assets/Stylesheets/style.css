@@ -135,7 +135,6 @@ div.form_container form {
 
 .form_title {
   text-align: center;
-  border-bottom: 1px solid black;
   margin: 5px;
   padding: 10px;
 }
@@ -145,17 +144,29 @@ div.form_container form {
   grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto ;
 }
 
-.grid_container .grid_item_label, 
-.grid_container .grid_item_input {
+.left_container{
   display: flex;
-  align-items: center;
+  grid-column: 1/4;
+  justify-content: flex-end;
+  padding: 10px 5px;
+  color: #969696;
+  margin-right: 10px; 
 }
 
-.grid_container .grid_item_label{
-  justify-content: end;
-  grid-column: 1/2;
-  padding: 5px;
+.right_container{
+  display: flex;
+  grid-column: 4/13;
+  padding: 10px 5px;
+  color: #4d4d4d;
 }
+
+hr{
+  grid-column: 1/13;
+  border: none;
+  height: 1px;
+  background-color: #E3E3E3;
+}
+
 
 .grid_container .grid_item_input{
   grid-column: 2/13;
@@ -179,8 +190,31 @@ div.form_container form {
               rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
 }
 
+button {
+  border: 1px solid ;
+  border-radius: 3px;
+  border-color: #34B5E5;
+  background-color: #34B5E5;
+  color: white;
+  font-size: large;
+  /* margin: 5px; */
+  padding: 8px 20px;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, 
+              rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+}
+button:hover{
+  background-color: #1a9ccb;
+}
+button:active{
+  padding-top:9px;
+  padding-bottom: 7px;
+}
+
 .card_title{
+  display: flex;
+  justify-content: space-between;
   padding: 5px 5px;
+  color: #464646;
 }
 
 .card .card_line{

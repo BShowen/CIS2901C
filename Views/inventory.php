@@ -63,45 +63,45 @@ foreach($inventory_items as $inventory_item){
       </div>
       <div class="grid_container">
         
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="item_name">Item name</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <input type="text" id="item_name" name="item_name">
         </div>
 
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="item_description">Item description</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <textarea id="item_description" name="item_description"></textarea>
         </div>
 
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="in_stock">In Stock</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <select name="in_stock" id="in_stock">
             <option value="1">Yes</option>
             <option value="0">No</option>
           </select>
         </div>
 
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="stock_level">Stock level</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <input type="number" id="stock_level" name="stock_level" min="0" step="1">
         </div>  
 
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="price">Price</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <input type="number" id="price" name="price" min="0" step=".01">
         </div>
 
-        <div class="grid_item_input">
+        <div class="right_container">
           <button type="submit">Submit</button>
         </div>
       </div>

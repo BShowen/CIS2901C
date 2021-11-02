@@ -36,7 +36,7 @@ function table_has_new_row($set_to_true = false){
 
 // This function will redirect the user to the desired page. 
 // $page is a string. For example redirect_to("index");
-function redirect_to($page){
+function redirect_to($page, $query_parameters = null){
   switch(strtolower($page)){
     case "login":
       Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/index.php");
@@ -52,6 +52,9 @@ function redirect_to($page){
       break;
     case "customers":
       Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/customers.php");
+      break;
+    case "customer":
+      Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/customer.php".$query_parameters);
       break;
     case "employees":
       Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/employees.php");

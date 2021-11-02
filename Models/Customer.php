@@ -19,7 +19,7 @@ class Customer implements CRUDInterface {
   public function __construct($params){
     $this->db = new Database();
     $this->set_attributes($params);
-    $this->customer_exists = isset($this->customer_id); //The customer_id is only set if the customer exists in the database. 
+    $this->customer_exists = isset($this->customer_id); //The customer_id is set only when the customer exists in the database. 
     if(!isset($this->business_id) && isset($_COOKIE['business_id'])){
       $this->business_id = $_COOKIE['business_id'];
     }
@@ -105,6 +105,7 @@ class Customer implements CRUDInterface {
       // For this reason I don't simply return true. I return what the database returns. 
     }elseif($has_valid_attributes && $this->customer_exists){ 
       //if true then we are updating an existing customer
+      echo "the update section of the save() method in the Customer object has been called. why?";exit;
       return $this->update();
     }
     //If this is reached then the customer object has invalid attributes. 
@@ -163,12 +164,15 @@ class Customer implements CRUDInterface {
     return count($this->errors) == 0;
   }
 
-  private function update(){
+  public function update(){
     $params = ['customer_id'=>$this->customer_id];
     $attribute_names = $this->get_attribute_names();
     foreach($attribute_names as $attribute_name){
-      $params[$attribute_name] = $this->$attribute_name;
+      if($this->$attribute_name != null){
+        $params[$attribute_name] = $this->$attribute_name;
+      }
     }
+    unset($params['business_id']);
     return $this->db->update($params, 'Customers')[0];
   }
 

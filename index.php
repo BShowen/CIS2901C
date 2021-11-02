@@ -21,61 +21,61 @@ if(isset($_GET['signup'])){
           <div class="card_title">
             <h1>Sign up</h1>
           </div>
-          <hr class="card_line">
+          <hr>
           <div class="card_details"> 
             <form action='/businessManager/Controllers/signup.php' method='POST' >
               <div class="grid_container">
 
-                <div class="grid_item_label">
+                <div class="left_container">
                   <label for='user_name'>Business name</label>
                 </div>
-                <div class="grid_item_input">
+                <div class="right_container">
                   <input type='text' id='business_name' name='business_name'>
                 </div>
 
-                <div class="grid_item_label">
+                <div class="left_container">
                   <label for='user_name'>First name</label>
                 </div>
-                <div class="grid_item_input">
+                <div class="right_container">
                   <input type='text' id='first_name' name='first_name'>
                 </div>
 
-                <div class="grid_item_label">
+                <div class="left_container">
                   <label for='user_name'>Last name</label>
                 </div>
-                <div class="grid_item_input">
+                <div class="right_container">
                   <input type='text' id='last_name' name='last_name'>
                 </div>
 
-                <div class="grid_item_label">
+                <div class="left_container">
                   <label for='user_name'>Username</label>
                 </div>
-                <div class="grid_item_input">
+                <div class="right_container">
                   <input type='text' id='user_name' name='user_name'>
                 </div>
 
-                <div class="grid_item_label">
+                <div class="left_container">
                   <label for='user_name'>Email address</label>
                 </div>
-                <div class="grid_item_input">
+                <div class="right_container">
                   <input type='text' id='email_address' name='email_address'>
                 </div>
                 
-                <div class="grid_item_label">
+                <div class="left_container">
                   <label for='password'>Password</label>
                 </div>
-                <div class="grid_item_input">
+                <div class="right_container">
                   <input type='password' id='password' name='password'>
                 </div>
                 
-                <div class="grid_item_label">
+                <div class="left_container">
                   <label for='verify_password'>Verify Password</label>
                 </div>
-                <div class="grid_item_input">
+                <div class="right_container">
                   <input type='password' id='verify_password' name='verify_password'>
                 </div>
                 
-                <div class="grid_item_input">
+                <div class="right_container">
                   <button type="submit">Submit</button>
                 </div>
               </div>
@@ -89,26 +89,26 @@ if(isset($_GET['signup'])){
           <div class="card_title">
             <h1>Login</h1>
           </div>
-          <hr class="card_line">
+          <hr>
           <div class="card_details"> 
             <form action='/businessManager/Controllers/login.php' method='POST' class="authentication_form">
               <div class="grid_container">
 
-                <div class="grid_item_label">
+                <div class="left_container">
                   <label for='user_name'>Username</label>
                 </div>
-                <div class="grid_item_input">
+                <div class="right_container">
                   <input type='text' id='user_name' name='user_name'>
                 </div>
                 
-                <div class="grid_item_label">
+                <div class="left_container">
                   <label for='password'>Password</label>
                 </div>
-                <div class="grid_item_input">
+                <div class="right_container">
                   <input type='password' id='password' name='password'>
                 </div>
                 
-                <div class="grid_item_input">
+                <div class="right_container">
                   <button type="submit">Submit</button>
                 </div>
 

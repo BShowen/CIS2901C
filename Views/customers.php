@@ -63,49 +63,49 @@ foreach($customers as $customer){
         <h1>New customer</h1>
       </div>
       <div class="grid_container">
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="first_name">First name</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <input type="text" id="first_name" name="first_name">
         </div>
 
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="last_name">Last name</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <input type="text" id="last_name" name="last_name">
         </div>
 
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="street_address">Street address</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <input type="text" id="street_address" name="street_address">
         </div>
 
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="city">City</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <input type="text" id="city" name="city">
         </div>
 
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="state">State</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <input type="text" id="state" name="state">
         </div>
 
-        <div class="grid_item_label">
+        <div class="left_container">
           <label for="zip">Zip</label>
         </div>
-        <div class="grid_item_input">
+        <div class="right_container">
           <input type="text" id="zip" name="zip">
         </div>
 
-        <div class="grid_item_input">
+        <div class="right_container">
           <input type="submit">
         </div>
       </div>
