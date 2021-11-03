@@ -14,12 +14,10 @@ class Customer implements CRUDInterface {
   private $db;
 
   private $errors = [];
-  private $customer_exists; //True when customer exists in the database. 
 
   public function __construct($params){
     $this->db = new Database();
     $this->set_attributes($params);
-    $this->customer_exists = isset($this->customer_id); //The customer_id is set only when the customer exists in the database. 
     if(!isset($this->business_id) && isset($_COOKIE['business_id'])){
       $this->business_id = $_COOKIE['business_id'];
     }
@@ -30,6 +28,9 @@ class Customer implements CRUDInterface {
     $this->$name = $value;
   }
 
+  /*
+  This function returns all records from the Customers table in the database. 
+  */  
   public static function all(){
     $database = new Database();
     $query = "SELECT * FROM Customers WHERE business_id = ?";
@@ -45,6 +46,9 @@ class Customer implements CRUDInterface {
     return $customers;
   }
 
+  /* 
+  This function deletes the current record in the database. 
+  */
   public function delete(){
     $customer_has_sales = $this->db->exists(['customer_id'=> $this->customer_id], 'Sales');
     if($customer_has_sales){
@@ -80,14 +84,13 @@ class Customer implements CRUDInterface {
   // Params is ['attribute_name'=>value, 'attribute_name'=>value]
   private function set_attributes($params){
     foreach($params as $attribute_name => $attribute_value){
-      $this->$attribute_name = $attribute_value;
+      $this->$attribute_name = strtolower($attribute_value);
     }
   }
 
   // Saves the current object in the database. 
   public function save(){
-    $has_valid_attributes = $this->has_valid_attributes();
-    if($has_valid_attributes && !$this->customer_exists){ 
+    if($this->can_save()){ 
       //if true then we are saving a new customer
       $query = $this->build_insertion_query();
 
@@ -100,14 +103,13 @@ class Customer implements CRUDInterface {
       }
       /////////////////////////////////////////////////////////////////////////////////////////////////////////
       $results = $this->db->execute_sql_statement($query, $params);
+      
+      /*
+      $results is a boolean value. This value CAN be false if something goes wrong in the database. For this reason I don't "return true", I return what the database returns. 
+      */
       return $results[0]; 
-      //This is a boolean value. This value CAN be false is something goes wrong in the database. 
-      // For this reason I don't simply return true. I return what the database returns. 
-    }elseif($has_valid_attributes && $this->customer_exists){ 
-      //if true then we are updating an existing customer
-      echo "the update section of the save() method in the Customer object has been called. why?";exit;
-      return $this->update();
     }
+
     //If this is reached then the customer object has invalid attributes. 
     return False; 
   }
@@ -136,55 +138,36 @@ class Customer implements CRUDInterface {
   }
 
   // Returns a boolean indicating whether or not the current state of the object is valid to save in the database. 
-  private function has_valid_attributes(){
-    if(strlen(trim($this->first_name)) == 0 || strlen(trim($this->first_name)) > 20){
-      array_push($this->errors, "Customer first name must be greater than 0 characters and less than 21 characters.");
+  private function can_save(){
+    $this->errors = [];
+    $attribute_names = $this->get_attribute_names();
+    foreach($attribute_names as $attribute_name){
+      $this->validate_attribute($attribute_name);
     }
-
-    if(strlen(trim($this->last_name)) == 0 || strlen(trim($this->last_name)) > 20){
-      array_push($this->errors, "Customer last name must be greater than 0 characters and less than 21 characters.");
-    }
-
-    if(strlen(trim($this->street_address)) == 0 || strlen(trim($this->street_address)) > 50){
-      array_push($this->errors, "Customer street address must be greater than 0 characters and less than 51 characters.");
-    }
-
-    if(strlen(trim($this->city)) == 0 || strlen(trim($this->city)) > 20){
-      array_push($this->errors, "Customer city must be greater than 0 characters and less than 51 characters.");
-    }
-
-    if(strlen(trim($this->state)) == 0 || strlen(trim($this->state)) > 2){
-      array_push($this->errors, "Customer state must be 2 characters long.");
-    }
-
-    if(strlen(trim($this->zip)) == 0 || strlen(trim($this->zip)) > 5){
-      array_push($this->errors, "Customer zip code must be greater than 0 characters and less than 6 characters.");
-    }
-
     return count($this->errors) == 0;
   }
 
-  public function update(){
-    $params = ['customer_id'=>$this->customer_id];
-    $attribute_names = $this->get_attribute_names();
-    foreach($attribute_names as $attribute_name){
-      if($this->$attribute_name != null){
-        $params[$attribute_name] = $this->$attribute_name;
-      }
-    }
-    unset($params['business_id']);
-    return $this->db->update($params, 'Customers')[0];
-  }
-
-
   public function __get($name){
-    
     switch($name){
       case 'sales':
         return $this->get_child_records(['table'=>'Sales']);
         break;
       case 'invoices':
         return $this->get_child_records(['table'=>'Invoices']);
+        break;
+      case 'first_name':
+        return ucfirst($this->first_name);
+        break;
+      case 'last_name':
+        return ucfirst($this->last_name);
+      case 'street_address':
+        return ucwords($this->street_address);
+        break;
+      case 'city': 
+        return ucwords($this->city);
+        break;
+      case 'state':
+        return strtoupper($this->state);
         break;
       default:
         return $this->$name;
@@ -233,6 +216,76 @@ class Customer implements CRUDInterface {
       array_push($this->errors, "This customer does not have any $child_type"."s.");
     }
     return $child_records;  
+  }
+
+  /*
+  This function attempts to update the record in the database. This function returns True or False. This function works by validating only the attributes that are set. If all of the attributes (that are set) are valid, then the update occurs. 
+  */
+  public function update(){
+    if($this->can_update()){
+      $params = ['customer_id'=>$this->customer_id];
+      $attribute_names = $this->get_attribute_names();
+      foreach($attribute_names as $attribute_name){
+        if($this->$attribute_name != null){
+          $params[$attribute_name] = $this->$attribute_name;
+        }
+      }
+      unset($params['business_id']);
+      return $this->db->update($params, 'Customers')[0];  
+    }
+    return false;
+  }
+
+  /* 
+  This function validates only the attributes that the object currently has set. For example, if $this->name is set and $this->age is not set, then this function makes sure to validate only $this->name and not $this->age. 
+  */
+  private function can_update(){
+    $this->errors = [];
+    $attribute_names = $this->get_attribute_names();
+    foreach($attribute_names as $attribute_name){
+      if(isset($this->$attribute_name)){
+        $this->validate_attribute($attribute_name);
+      }
+    }
+    return count($this->errors) == 0;
+  }
+
+  /*
+  This function will validate any attribute that you ask it to. $attribute_name equals a string representation of what attribute to check. For example, validate_attribute("first_name"); 
+  */
+  private function validate_attribute($attribute_name){
+    switch( strtolower($attribute_name) ){
+      case "first_name":
+        if(strlen(trim($this->first_name)) == 0 || strlen(trim($this->first_name)) > 20){
+          array_push($this->errors, "Customer first name must be greater than 0 characters and less than 21 characters.");
+        }
+        break;
+      case "last_name": 
+        if(strlen(trim($this->last_name)) == 0 || strlen(trim($this->last_name)) > 20){
+          array_push($this->errors, "Customer last name must be greater than 0 characters and less than 21 characters.");
+        }
+        break;
+      case "street_address":
+        if(strlen(trim($this->street_address)) == 0 || strlen(trim($this->street_address)) > 50){
+          array_push($this->errors, "Customer street address must be greater than 0 characters and less than 51 characters.");
+        }
+        break;
+      case "city":
+        if(strlen(trim($this->city)) == 0 || strlen(trim($this->city)) > 20){
+          array_push($this->errors, "Customer city must be greater than 0 characters and less than 51 characters.");
+        }
+        break;
+      case "state":
+        if(strlen(trim($this->state)) == 0 || strlen(trim($this->state)) > 2){
+          array_push($this->errors, "Customer state must be 2 characters long.");
+        }
+        break;
+      case "zip":
+        if(strlen(trim($this->zip)) == 0 || strlen(trim($this->zip)) > 5){
+          array_push($this->errors, "Customer zip code must be greater than 0 characters and less than 6 characters.");
+        }
+        break;
+    }
   }
 
 }

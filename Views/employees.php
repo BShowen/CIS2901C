@@ -19,24 +19,32 @@ if(!empty($employees)){
   foreach($employees as $employee){
     $current_row++;
     if(($current_row == $last_row) && table_has_new_row()){
-      $table_rows.="<tr class='new_row'>";
+      $table_rows.="<tr class='new_row clickable' data-href='/businessManager/Views/employee.php?employee_id=$employee->employee_id'>";
     }else{
-      $table_rows.="<tr>";
+      $table_rows.="<tr class='clickable' data-href='/businessManager/Views/employee.php?employee_id=$employee->employee_id'>";
     } 
-    if($admin_user && (intval(current_logged_in_employee()->employee_id) != intval($employee->employee_id))){
+    if($admin_user){
       $table_rows.="<td>$employee->first_name</td>
         <td>$employee->last_name</td>
         <td>$employee->user_name</td>
         <td>$employee->email_address</td>
-        <td class='action_buttons'>
-          <a class='action_button' href='/businessManager/Controllers/delete_employee.php?employee_id={$employee->employee_id}'>Delete</a>
-        </td>
-      </tr>";
+        <td class='action_buttons'>";
+        // If the current user is this user, then don't show a delete button. Users cant delete themselves this way. 
+        if(intval(current_logged_in_employee()->employee_id) == intval($employee->employee_id)){
+          $table_rows.="<p class='action_button'>Delete</p>
+            </td>
+          </tr>";
+        }else{
+          $table_rows.="<a class='action_button' href='/businessManager/Controllers/delete_employee.php?employee_id={$employee->employee_id}'>Delete</a>
+            </td>
+          </tr>";
+        }
     }else{
       $table_rows.="<td>$employee->first_name</td>
         <td>$employee->last_name</td>
         <td>$employee->user_name</td>
         <td>$employee->email_address</td>
+        
       </tr>";
     }
   }
@@ -120,8 +128,8 @@ if(!empty($employees)){
           </div>
           <div class="right_container"> 
             <select id="is_admin" name="is_admin">
-              <option value="0">No</option>
               <option value="1">Yes</option>
+              <option value="0">No</option>
             </select>
           </div>
 

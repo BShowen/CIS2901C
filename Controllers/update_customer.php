@@ -19,7 +19,11 @@ if(count($params) > 1){
   if($customer->update()){
     set_session_messages([new Message("success", "Customer details have been updated.")]);
   }else{
-    set_session_messages([new Message("error", "Something went wrong. Please try again.")]);
+    $messages = [];
+    foreach($customer->errors as $error_message){
+      array_push($messages, new Message("error", $error_message));
+    }
+    set_session_messages($messages);
   }
 }else{
   set_session_messages([new Message("error", "Nothing was updated.")]);

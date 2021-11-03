@@ -38,7 +38,7 @@
       <hr>
 
       <div class="left_container">
-        Street address
+        <p>Street address</p>
       </div>
       <div class="right_container">
         <div>
@@ -55,7 +55,7 @@
       <hr>
 
       <div class="left_container">
-        <button id="edit_customer_details" data-url="<?php echo $_SERVER['REQUEST_URI']."&edit=1" ?>">Edit</button>
+        <button id="edit_details" data-url="<?php echo $_SERVER['REQUEST_URI']."&edit=1" ?>">Edit</button>
       </div>
 
     </div>

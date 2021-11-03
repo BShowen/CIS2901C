@@ -59,6 +59,9 @@ function redirect_to($page, $query_parameters = null){
     case "employees":
       Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/employees.php");
       break;
+    case "employee":
+      Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/employee.php".$query_parameters);
+      break;
     case "inventory":
       Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/inventory.php");
       break;
@@ -97,7 +100,7 @@ function get_filtered_post_params(){
   $params = [];
   $attribute_names = array_keys($_POST);
   foreach($attribute_names as $attribute_name){
-    $params[$attribute_name] = htmlspecialchars($_POST[$attribute_name]);
+    $params[$attribute_name] = htmlspecialchars( trim($_POST[$attribute_name]) );
   } 
   return $params;
 }

@@ -19,7 +19,6 @@ class Employee implements CRUDInterface {
   private $password;        //This is set only when we are creating a NEW customer. This will be hashed and stored in the db. 
   private $verify_password; //This is set only when we are creating a NEW customer. This will be hashed and stored in the db. 
   private $errors = [];
-  // private $authenticated;
   private $db;
 
   public function __construct($params){
@@ -28,14 +27,18 @@ class Employee implements CRUDInterface {
     return $this;
   }
 
+  
   public function __get($name){
     switch($name){
       case 'sales':
         return $this->get_child_records(['table'=>'Sales']);
         break;
-      case 'is_valid':
-        $this->is_valid = $this->has_valid_attributes();
-        return $this->is_valid;
+      case 'first_name':
+        return ucfirst($this->first_name);
+        break;
+      case 'last_name':
+        return ucfirst($this->last_name);
+        break;
       default:
         return $this->$name;
         break;
@@ -62,11 +65,6 @@ class Employee implements CRUDInterface {
 
   // returns true or false indicating if the user_name and password are correct.
   public function authenticate($password){
-    // $this->authenticated = password_verify($password, $this->password_digest);
-    // if(!$this->authenticated){
-    //   array_push($this->errors, "Invalid password");
-    // }
-    // return $this->authenticated;
     if(password_verify($password, $this->password_digest)){
       return true;
     }else{
@@ -124,7 +122,11 @@ class Employee implements CRUDInterface {
     if(isset($params)){
       // This loop will set the attributes that were passed in. 
       foreach($params as $attribute_name => $attribute_value){
-        $this->$attribute_name = $attribute_value;
+        if($attribute_name == 'first_name' || $attribute_name == 'last_name' ){
+          $this->$attribute_name = strtolower($attribute_value);
+        }else{
+          $this->$attribute_name = $attribute_value;
+        }
       }
       
       // Any attributes that were not set will now be set to their default values.   
@@ -133,10 +135,6 @@ class Employee implements CRUDInterface {
       if(!isset($this->business_id) && isset($_COOKIE['business_id'])){
         $this->business_id = $_COOKIE['business_id'];
       }
-
-      // if(!isset($this->authenticated) && isset($_COOKIE['authenticated'])){
-      //   $this->authenticated = $_COOKIE['authenticated'];
-      // }
 
       $this->password_reset_token = '';
       if(!isset($this->temp_password)){
@@ -180,14 +178,13 @@ class Employee implements CRUDInterface {
 
   // Attempts to save the current object to the database. Returns a boolean value. 
   public function save(){
-    $has_valid_attributes = $this->has_valid_attributes();
-    if($has_valid_attributes && !$this->employee_exists){ 
-      // Create the password digest before saving the Employee. We know that $this->password is set because 
-      // $this->has_valid_attributes would have returned false otherwise. 
+    if( $this->can_save() ){ 
+      /* 
+      Create the password digest before saving the Employee. We know that $this->password is set because 
+      $this->can_save would have returned false. 
+      */
       $this->password_digest = password_hash($this->password, PASSWORD_DEFAULT);
-      //if true then we are saving a new employee
       $query = $this->build_insertion_query();
-
       /////////////////////////////////////////////////////////////////////////////////////////////////////////
       // This needs to be its own function
       $attribute_name_list = $this->get_attribute_names();
@@ -195,16 +192,12 @@ class Employee implements CRUDInterface {
       foreach($attribute_name_list as $attribute_name){
         $params[$attribute_name] = $this->$attribute_name;
       }
-
       /////////////////////////////////////////////////////////////////////////////////////////////////////////
       $results = $this->db->execute_sql_statement($query, $params);
       $this->employee_id = $this->db->last_inserted_id;
-      return $results[0]; 
       //This is a boolean value. This value CAN be false is something goes wrong in the database. 
       // For this reason I don't simply return true. I return what the database returns. 
-    }elseif($has_valid_attributes && $this->employee_exists){ 
-      //if true then we are updating an existing employee
-      return $this->update();
+      return $results[0]; 
     }
     //If this is reached then the employee object has invalid attributes. 
     return False; 
@@ -220,9 +213,11 @@ class Employee implements CRUDInterface {
       return "INSERT INTO Employees ( ".implode(', ', $this->get_attribute_names())." ) VALUES( $query_parameter_placeholder )";
   }
 
-  // This function queries the database ands returns a list of attributes required for the object. 
-  // Primary_key is omitted from the returned list. 
-  // example return value ['first_name', 'last_name', 'etc', ... ];
+  /*
+  This function queries the database ands returns a list of attributes required for the object. 
+  Primary_key is omitted from the returned list. 
+  example return value ['first_name', 'last_name', 'etc', ... ];
+  */
   private function get_attribute_names(){
     $query = "SHOW COLUMNS FROM Employees";
     $results = $this->db->execute_sql_statement($query);
@@ -257,13 +252,15 @@ class Employee implements CRUDInterface {
       array_push($this->errors, "This email address is already in use.");
     } 
     
-    // if(!isset($this->password_digest) && (strlen(trim($this->password)) == 0 || strlen(trim($this->password)) > 20)){
+
     if(strlen(trim($this->password)) == 0 || strlen(trim($this->password)) > 20){
       array_push($this->errors, "Employee password must be greater than 0 characters and less than 21 characters.");
     }
-    // echo "password checked";var_dump($this->errors);exit;
-    // If the business_id is not set then that means we are creating a new user and we must perform checks on the password.
-    // If the business_id is set then this check will be skipped. There is no need to check the password. 
+
+    /*
+    If the business_id is not set then that means we are creating a new user and we must perform checks on the password.
+    If the business_id is set then this check will be skipped. There is no need to check the password. 
+    */
     if(!isset($this->business_id)){
       if(strlen(trim($this->password)) == 0 && strlen(trim($this->temp_password) == 0)){
         array_push($this->errors, "Password is required.");
@@ -275,13 +272,19 @@ class Employee implements CRUDInterface {
     return count($this->errors) == 0;
   }
 
-  private function update(){
-    $params = ['employee_id'=>$this->employee_id];
-    $attribute_names = $this->get_attribute_names();
-    foreach($attribute_names as $attribute_name){
-      $params[$attribute_name] = $this->$attribute_name;
+  public function update(){
+    if($this->can_update()){
+      $params = ['employee_id'=>$this->employee_id];
+      $attribute_names = $this->get_attribute_names();
+      foreach($attribute_names as $attribute_name){
+        if($this->$attribute_name != null){
+          $params[$attribute_name] = $this->$attribute_name;
+        }
+      }
+      unset($params['business_id']);
+      return $this->db->update($params, 'Employees')[0];  
     }
-    return $this->db->update($params, 'Employees')[0];
+    return false;
   }
 
 
@@ -295,6 +298,78 @@ class Employee implements CRUDInterface {
       return $this->db->delete($params, 'Employees');
     }
     return count($this->errors) == 0;
+  }
+
+    /* 
+  This function validates only the attributes that the object currently has set. For example, if $this->name is set and $this->age is not set, then this function makes sure to validate only $this->name and not $this->age. 
+  */
+  private function can_update(){
+    $this->errors = [];
+    $attribute_names = $this->get_attribute_names();
+    foreach($attribute_names as $attribute_name){
+      if(isset($this->$attribute_name)){
+        $this->validate_attribute($attribute_name);
+      }
+    }
+    return count($this->errors) == 0;
+  }
+
+  // Returns a boolean indicating whether or not the current state of the object is valid to save in the database. 
+  private function can_save(){
+    $this->errors = [];
+    $attribute_names = $this->get_attribute_names();
+    foreach($attribute_names as $attribute_name){
+      $this->validate_attribute($attribute_name);
+    }
+    return count($this->errors) == 0;
+  }
+
+  /*
+  This function will validate any attribute that you ask it to. $attribute_name equals a string representation of what attribute to check. For example, validate_attribute("first_name"); 
+  */
+  private function validate_attribute($attribute){
+    switch( strtolower($attribute) ){
+      case 'first_name':
+        if(strlen(trim($this->first_name)) == 0 || strlen(trim($this->first_name)) > 20){
+          array_push($this->errors, "Employee first name must be greater than 0 characters and less than 21 characters.");
+        }
+        break;
+      case 'last_name':
+        if(strlen(trim($this->last_name)) == 0 || strlen(trim($this->last_name)) > 20){
+          array_push($this->errors, "Employee last name must be greater than 0 characters and less than 21 characters.");
+        }
+        break;
+      case 'user_name':
+        if(strlen(trim($this->user_name)) == 0 || strlen(trim($this->user_name)) > 50){
+          array_push($this->errors, "Employee user name must be greater than 0 characters and less than 21 characters.");
+        }elseif($this->db->exists(['user_name'=>$this->user_name], 'Employees')){
+          array_push($this->errors, "This user name is already in use.");
+        }
+        break;
+      case 'email_address':
+        if(strlen(trim($this->email_address)) == 0 || strlen(trim($this->email_address)) > 50){
+          array_push($this->errors, "Employee email address must be greater than 0 characters and less than 51 characters.");
+        }elseif($this->db->exists(['email_address'=>$this->email_address], 'Employees')){
+          array_push($this->errors, "This email address is already in use.");
+        } 
+        break;
+      case 'password':
+        if(strlen(trim($this->password)) == 0 || strlen(trim($this->password)) > 20){
+          array_push($this->errors, "Employee password must be greater than 0 characters and less than 21 characters.");
+        }
+        // If the business_id is not set then that means we are creating a new user and we must perform checks on the password.
+        // If the business_id is set then this check will be skipped. There is no need to check the password. 
+        if(!isset($this->business_id)){
+          if(strlen(trim($this->password)) == 0 && strlen(trim($this->temp_password) == 0)){
+            array_push($this->errors, "Password is required.");
+          }elseif($this->password != $this->verify_password){
+            array_push($this->errors, "Passwords do not match.");
+          } 
+        }
+        break;
+      default:
+        break;
+    }
   }
 }
 ?>

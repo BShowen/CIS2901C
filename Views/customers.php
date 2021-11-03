@@ -22,8 +22,7 @@ foreach($customers as $customer){
     <td class='state'>$customer->state</td>
     <td class='zip'>$customer->zip</td>
     <td class='action_buttons'>
-      <a class='action_button' href='/businessManager/Controllers/delete_customer.php?customer_id=$customer->customer_id'>Delete</a> <!-- | 
-      <a class='action_button' data-id='$customer->customer_id' href='/businessManager'>Edit</a> -->
+      <a class='action_button' href='/businessManager/Controllers/delete_customer.php?customer_id=$customer->customer_id'>Delete</a>
     </td>
   </tr>";
 }

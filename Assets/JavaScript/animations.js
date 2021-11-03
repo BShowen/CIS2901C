@@ -2,8 +2,8 @@ window.onload = ()=>{
   formAnimation();
   tableAnimation();
   clickableTableRows();
-  editCustomerDetailsBUtton();
-  cancelCustomerEditForm();
+  editDetailsBUtton();
+  cancelEditForm();
 }
 
 function formAnimation(){
@@ -74,8 +74,8 @@ function clickableTableRows(){
 /* 
   This function gets the edit button from the customer page and redirects the user to the same page with a query parameter to show the form. 
 */
-function editCustomerDetailsBUtton(){
-  const editButton = document.querySelector('#edit_customer_details');
+function editDetailsBUtton(){
+  const editButton = document.querySelector('#edit_details');
   if(editButton){
     editButton.addEventListener('click', ()=>{ 
         const host = window.location.origin; //get the host name. For example "https://localHost:8080"
@@ -88,7 +88,7 @@ function editCustomerDetailsBUtton(){
 /* 
   This function gets the cancel button from the customer page and cancels the form submission by redirecting the user back to the same page with a query parameter removed, which toggles the form off. 
 */
-function cancelCustomerEditForm(){
+function cancelEditForm(){
   const cancelButton = document.querySelector('#cancel');
   if(cancelButton){
     cancelButton.addEventListener('click', (e)=>{ 
