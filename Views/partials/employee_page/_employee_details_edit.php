@@ -57,8 +57,8 @@
         <div class="right_container">
           <?php $is_admin = $employee->is_admin; ?>
           <select id="is_admin" name="is_admin">
-            <option value="0">No</option>
-            <option value="1">Yes</option>
+            <option value="1" <?php echo $is_admin ? "selected" : "" ?>>Yes</option>
+            <option value="0" <?php echo $is_admin ? "" : "selected" ?>>No</option>
           </select>
         </div>
         <hr>

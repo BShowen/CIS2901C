@@ -12,14 +12,12 @@ class InventoryItem implements CRUDInterface {
   private $stock_level; 
   private $price;
   private $business_id;
-  private $inventory_item_exists; 
   private $errors = [];
   private $db;
 
   public function __construct($params){
     $this->db = new Database();
     $this->set_attributes($params);
-    $this->inventory_item_exists = isset($this->item_id);
     if(!isset($this->business_id) && isset($_COOKIE['business_id'])){
       $this->business_id = $_COOKIE['business_id'];
     }
@@ -30,16 +28,26 @@ class InventoryItem implements CRUDInterface {
   // Params is ['attribute_name'=>value, 'attribute_name'=>value]
   private function set_attributes($params){
     foreach($params as $attribute_name => $attribute_value){
-      $this->$attribute_name = $attribute_value;
+      switch($attribute_name){
+        case "item_name": 
+          $this->item_name = strtolower($attribute_value);
+          break;
+        default:
+          $this->$attribute_name = $attribute_value;
+          break;
+      }
     }
   }
 
-  public function __set($name, $value){
-    $this->$name = $value;
-  }
-
   public function __get($name){
-    return $this->$name;
+    switch($name){
+      case "item_name": 
+        return ucwords($this->item_name);
+        break;
+      default: 
+        return $this->$name;
+        break;
+    }
   }
 
   public static function all(){
@@ -76,8 +84,7 @@ class InventoryItem implements CRUDInterface {
   }
 
   public function save(){
-    $has_valid_attributes = $this->has_valid_attributes();
-    if($has_valid_attributes && !$this->inventory_item_exists){ 
+    if($this->can_save()){
       //if true then we are saving a new Item
       $query = $this->build_insertion_query();
 
@@ -93,21 +100,24 @@ class InventoryItem implements CRUDInterface {
       return $results[0]; 
       //This is a boolean value. This value CAN be false is something goes wrong in the database. 
       // For this reason I don't simply return true. I return what the database returns. 
-    }elseif($has_valid_attributes && $this->inventory_item_exists){ 
-      //if true then we are updating an existing item
-      return $this->update();
     }
     //If this is reached then the sale object has invalid attributes. 
     return False; 
   }
 
-  private function update(){
-    $params = ['item_id'=>$this->item_id];
-    $attribute_names = $this->get_attribute_names();
-    foreach($attribute_names as $attribute_name){
-      $params[$attribute_name] = $this->$attribute_name;
+  public function update(){
+    if($this->can_update()){
+      $params = ['item_id'=>$this->item_id];
+      $attribute_names = $this->get_attribute_names();
+      foreach($attribute_names as $attribute_name){
+        if($this->$attribute_name != null){
+          $params[$attribute_name] = $this->$attribute_name;
+        }
+      }
+      unset($params['business_id']);
+      return $this->db->update($params, 'Inventory_items')[0];  
     }
-    return $this->db->update($params, 'Inventory_items')[0];
+    return false;
   }
 
   // This function queries the database ands returns a list of attributes required for the object. 
@@ -123,19 +133,30 @@ class InventoryItem implements CRUDInterface {
     return array_slice($attributes, 1);
   }
 
-  // Returns a boolean indicating whether or not the current state of the object is valid to save in the database. 
-  private function has_valid_attributes(){
-    if(strlen(trim($this->item_name)) == 0 || strlen(trim($this->item_name)) > 20){
-      array_push($this->errors, "Item name must be greater than 0 character and less than 21 characters.");
-    }
-    if(strlen(trim($this->item_description)) == 0){
-      array_push($this->errors, "Item description must be greater than 0 characters.");
-    }
-    if(!is_numeric($this->stock_level) || strlen(trim($this->stock_level)) < 0){
-      array_push($this->errors, "Stock level must be greater than 0 or equal to 0.");
-    }
-    if(!is_numeric($this->price) || floatval($this->price) < 0){
-      array_push($this->errors, "Price must be a float, greater than or equal to 0.00");
+  /*
+  This function will validate any attribute that you ask it to. $attribute_name equals a string representation of what attribute to check. For example, validate_attribute("first_name"); 
+  */
+  private function validate_attribute($attribute){
+    switch(strtolower($attribute)){
+      case "item_name";
+        if(strlen(trim($this->item_name)) == 0 || strlen(trim($this->item_name)) > 20){
+          array_push($this->errors, "Item name must be greater than 0 character and less than 21 characters.");
+        }
+        break;
+      case "item_description":
+        if(strlen(trim($this->item_description)) == 0){
+          array_push($this->errors, "Item description must be greater than 0 characters.");
+        }
+        break;
+      case "stock_level":
+        if(!is_numeric($this->stock_level) || strlen(trim($this->stock_level)) < 0){
+          array_push($this->errors, "Stock level must be greater than 0 or equal to 0.");
+        }
+        break;
+      case "price":
+        if(!is_numeric($this->price) || floatval($this->price) < 0){
+          array_push($this->errors, "Price must be a float, greater than or equal to 0.00");
+        }
     }
     return count($this->errors) == 0;
   }
@@ -160,6 +181,30 @@ class InventoryItem implements CRUDInterface {
       return $this->db->delete($params, 'Inventory_items');
     }
     return False;
+  }
+
+  // Returns a boolean indicating whether or not the current state of the object is valid to save in the database. 
+  private function can_save(){
+    $this->errors = [];
+    $attribute_names = $this->get_attribute_names();
+    foreach($attribute_names as $attribute_name){
+      $this->validate_attribute($attribute_name);
+    }
+    return count($this->errors) == 0;
+  }
+
+  /* 
+  This function validates only the attributes that the object currently has set. For example, if $this->name is set and $this->age is not set, then this function makes sure to validate only $this->name and not $this->age. 
+  */
+  private function can_update(){
+    $this->errors = [];
+    $attribute_names = $this->get_attribute_names();
+    foreach($attribute_names as $attribute_name){
+      if(isset($this->$attribute_name)){
+        $this->validate_attribute($attribute_name);
+      }
+    }
+    return count($this->errors) == 0;
   }
 
 }

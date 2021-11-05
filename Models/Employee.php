@@ -113,10 +113,6 @@ class Employee implements CRUDInterface {
     return $child_records;  
   }
 
-  public function __set($name, $value){
-    $this->$name = $value;
-  }
-
   // Params is ['attribute_name'=>value, 'attribute_name'=>value]
   private function set_attributes($params){
     if(isset($params)){
@@ -300,7 +296,7 @@ class Employee implements CRUDInterface {
     return count($this->errors) == 0;
   }
 
-    /* 
+  /* 
   This function validates only the attributes that the object currently has set. For example, if $this->name is set and $this->age is not set, then this function makes sure to validate only $this->name and not $this->age. 
   */
   private function can_update(){

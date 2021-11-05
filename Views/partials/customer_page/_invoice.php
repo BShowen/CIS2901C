@@ -2,7 +2,7 @@
   <div class="card_title">
     <h1>Invoices for sale <?php echo $sale_id ?></h1>
   </div>
-  <hr class="card_line">
+  <hr>
   <div class="card_details">
     <div class="table_container">
       <table>

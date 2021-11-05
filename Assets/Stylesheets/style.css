@@ -6,7 +6,7 @@
 }
 
 :root {
-  --table-row-height: 3rem;
+  --table-row-height: 4rem;
 }
 
 html {
@@ -18,34 +18,53 @@ body {
   background-color: #F4F7FA;
 }
 
-nav {
+main {
+  margin-left: 250px;
+  margin-top: 5.0em;
+  min-height: 100vh;
+  padding: 30px 100px;
+}
+
+.nav_container{
   background-color: lightgray;
   width: 250px;
   min-height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
-}
-
-nav ul{
-  min-height: 100vh;
-  list-style-type: none;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
+  padding: 30px 0;
+}
+
+.nav_button_container {
+  width: 100%;
+  height: 5em;
+  padding: 5px 0px;
+}
+
+.nav_button{
+  /* border: 2px solid green; */
+  text-decoration: none;
+  color: inherit;
+  display: flex;
   align-items: center;
-  padding-top: 30px;
+  padding: 10px 10px 10px 30px;
+  margin: 0px;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: large;
 }
 
-nav ul li {
-  margin: 20px 0;
+.nav_button:hover{
+  background-color: #34B5E5;
 }
 
-main {
-  margin-left: 250px;
-  margin-top: 5.0em;
-  height: 100vh;
-  padding: 30px 100px;
+.nav_user_details{  
+  padding: 5px 30px;
+  font-size: large;
+  line-height: 1.4em;
 }
 
 .user_message {
@@ -151,9 +170,11 @@ div.form_container form {
   display: flex;
   grid-column: 1/4;
   justify-content: flex-end;
+  align-items: center;
   padding: 10px 5px;
   color: #969696;
-  margin-right: 10px; 
+  /* margin-right: 10px;  */
+  /* border: 1px solid red; */
 }
 
 .right_container{
@@ -161,6 +182,7 @@ div.form_container form {
   grid-column: 4/13;
   padding: 10px 5px;
   color: #4d4d4d;
+  /* border: 1px solid green; */
 }
 
 hr{
@@ -180,10 +202,6 @@ hr{
   transition: background-color 2000ms;
 }
 
-.action_button:hover{
-  color: white;
-}
-
 .card{
   background-color: #FFFFFF;
   border-radius: 5px;
@@ -193,7 +211,9 @@ hr{
               rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
 }
 
-button {
+button, .action_button {
+  display: inline-block;
+  text-decoration: none;
   border: 1px solid ;
   border-radius: 3px;
   border-color: #34B5E5;
@@ -205,10 +225,10 @@ button {
   box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, 
               rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
 }
-button:hover{
+button:hover, .action_button:hover{
   background-color: #1a9ccb;
 }
-button:active{
+button:active, .action_button:active{
   padding-top:9px;
   padding-bottom: 7px;
 }
@@ -222,10 +242,6 @@ button:active{
   justify-content: space-between;
   padding: 5px 5px;
   color: #464646;
-}
-
-.card .card_line{
-  border: 2px solid #EEF1F5;
 }
 
 .card .card_details{
@@ -246,4 +262,11 @@ button:active{
 .authorization_form_container{
   width: 400px;
   margin: 13rem auto 0 auto;
+}
+
+input, select{
+  max-width: 500px;
+  border: 1px solid #E3E3E3;
+  border-radius: 3px;
+  padding: 5px;
 }

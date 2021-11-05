@@ -24,8 +24,7 @@ forEach($sales as $sale){
     <td class='sale_total'>$sale->sale_total</td>
     <td class='sale_date'>$sale->sale_date</td>
     <td class='action_buttons'>
-      <a class='action_button' href='/businessManager/Controllers/delete_sale.php?sale_id=$sale->sale_id'>Delete</a> | 
-      <!-- <a class='action_button' data-id='$customer->customer_id' href='#'>Edit</a> -->
+      <a class='action_button' href='/businessManager/Controllers/delete_sale.php?sale_id=$sale->sale_id'>Delete</a>
       <a class='action_button' data-id='$customer->customer_id' href='/businessManager/Views/customer.php?customer_id={$customer->customer_id}&sale_id={$sale->sale_id}&new_invoice=1'>Create invoice</a>
     </td>
   </tr>";
@@ -47,7 +46,6 @@ if($invoices_requested){
                               <td>$invoice->web_link</td>
                               <td class='action_buttons'>
                               <a class='action_button' href='/businessManager/Controllers/delete_invoice.php?invoice_id=$invoice->invoice_id'>Delete</a> 
-                              <!-- | <a class='action_button' data-id='$invoice->invoice_id' href='#'>Edit</a> -->
                               </td>
                             </tr>";
     }
@@ -72,7 +70,9 @@ if($invoices_requested){
       require __DIR__."/partials/customer_page/_customer_details.php";
     }
   
-    require __DIR__.'/partials/customer_page/_customer_sales.php';
+    if(count($customer->sales) > 0){
+      require __DIR__.'/partials/customer_page/_customer_sales.php';
+    }
   
     if($invoices_requested){ 
       require __DIR__.'/partials/customer_page/_invoice.php'; 

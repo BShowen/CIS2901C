@@ -71,14 +71,10 @@ if($invoices_requested){
       require __DIR__."/partials/employee_page/_employee_details.php";
     }
   
-    // require __DIR__.'/partials/employee_page/_employee_sales.php';
+    require __DIR__.'/partials/employee_page/_employee_sales.php';
   
-    // if($invoices_requested){ 
-    //   require __DIR__.'/partials/employee_page/_invoice.php'; 
-    // }
-
-    // if($create_invoice){
-    //   require __DIR__.'/partials/employee_page/_new_invoice_form.php';
-    // }
+    if($invoices_requested){ 
+      require __DIR__.'/partials/employee_page/_invoice.php'; 
+    }
   ?>
 </main>

@@ -105,7 +105,7 @@ foreach($customers as $customer){
         </div>
 
         <div class="right_container">
-          <input type="submit">
+          <button type="submit">Save</button>
         </div>
       </div>
     </form>

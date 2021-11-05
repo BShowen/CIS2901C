@@ -11,9 +11,9 @@ $table_rows = "";
 foreach($inventory_items as $inventory_item){
   $current_row++;
   if( ($current_row == $last_row) && table_has_new_row() ){
-    $table_rows.= "<tr class='new_row'>";
+    $table_rows.= "<tr class='new_row clickable' data-href='/businessManager/Views/inventory_item.php?item_id=$inventory_item->item_id'>";
   }else{
-    $table_rows.= "<tr>";
+    $table_rows.= "<tr class='clickable' data-href='/businessManager/Views/inventory_item.php?item_id=$inventory_item->item_id'>";
   }
   $in_stock = ($inventory_item->in_stock == 1) ? "Yes" : "No" ;
   $table_rows.="  <td class='item_name'>$inventory_item->item_name</td>

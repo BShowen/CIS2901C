@@ -30,11 +30,7 @@ if(!empty($employees)){
         <td>$employee->email_address</td>
         <td class='action_buttons'>";
         // If the current user is this user, then don't show a delete button. Users cant delete themselves this way. 
-        if(intval(current_logged_in_employee()->employee_id) == intval($employee->employee_id)){
-          $table_rows.="<p class='action_button'>Delete</p>
-            </td>
-          </tr>";
-        }else{
+        if(intval(current_logged_in_employee()->employee_id) != intval($employee->employee_id)){
           $table_rows.="<a class='action_button' href='/businessManager/Controllers/delete_employee.php?employee_id={$employee->employee_id}'>Delete</a>
             </td>
           </tr>";

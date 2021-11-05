@@ -14,7 +14,7 @@ class Page {
   public function __construct(){
     // Render the header, regardless of the status of the current user. 
     $this->render_header();
-
+    
     if(isset($_COOKIE['employee_id'])){
       $current_employee = Employee::find_by_id(intval($_COOKIE['employee_id']));
     }

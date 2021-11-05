@@ -17,13 +17,13 @@ foreach($sales as $sale){
   }
   $sales_person = $sale->sales_person->first_name;
   $customer = $sale->customer;
-  $table_rows.="<td>$sales_person</td>
+  $table_rows.="<td>$sale->sale_id</td>
+    <td>$sales_person</td>
     <td>$customer->first_name</td>
     <td>$sale->sale_total</td>
     <td>$sale->sale_date</td>
     <td class='action_buttons'>
-      <a class='action_button' href='/businessManager/Controllers/delete_sale.php?sale_id=$sale->sale_id'>Delete</a> <!-- | 
-      <a class='action_button' data-id='$sale->sale_id' href='#'>Edit</a> -->
+      <a class='action_button' href='/businessManager/Controllers/delete_sale.php?sale_id=$sale->sale_id'>Delete</a>
     </td>
   </tr>"; 
 }
@@ -47,6 +47,7 @@ foreach($customers as $customer){
       <caption class="table_title"><h1>Sales</h1></caption>
       <thead>
         <tr class="no-hover">
+          <th scope="col">Sale number</th>
           <th scope="col">Sales person</th>
           <th scope="col">Customer</th>
           <th scope="col">Sale total</th>

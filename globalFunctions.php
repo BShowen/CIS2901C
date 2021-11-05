@@ -37,36 +37,40 @@ function table_has_new_row($set_to_true = false){
 // This function will redirect the user to the desired page. 
 // $page is a string. For example redirect_to("index");
 function redirect_to($page, $query_parameters = null){
+  $root = "Location: http://".$_SERVER['HTTP_HOST']."/businessManager";
   switch(strtolower($page)){
     case "login":
-      Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/index.php");
+      Header($root."/index.php");
       break;
       case "signup":
-        Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/index.php?signup=1");
+        Header($root."/index.php?signup=1");
         break;
     case "dashboard":
-      Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/dashboard.php");
+      Header($root."/Views/dashboard.php");
       break;
     case "invoices":
-      Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/invoices.php");
+      Header($root."/Views/invoices.php");
       break;
     case "customers":
-      Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/customers.php");
+      Header($root."/Views/customers.php");
       break;
     case "customer":
-      Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/customer.php".$query_parameters);
+      Header($root."/Views/customer.php".$query_parameters);
       break;
     case "employees":
-      Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/employees.php");
+      Header($root."/Views/employees.php");
       break;
     case "employee":
-      Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/employee.php".$query_parameters);
+      Header($root."/Views/employee.php".$query_parameters);
       break;
     case "inventory":
-      Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/inventory.php");
+      Header($root."/Views/inventory.php");
+      break;
+    case "inventory_item":
+      Header($root."/Views/inventory_item.php".$query_parameters);
       break;
     case "sales":
-      Header("Location: http://".$_SERVER['HTTP_HOST']."/businessManager/Views/sales.php");
+      Header($root."/Views/sales.php");
       break;
   }
 }
