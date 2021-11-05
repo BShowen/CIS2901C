@@ -264,7 +264,7 @@ button:active, .action_button:active{
   margin: 13rem auto 0 auto;
 }
 
-input, select{
+input, select, textarea{
   max-width: 500px;
   border: 1px solid #E3E3E3;
   border-radius: 3px;

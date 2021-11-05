@@ -21,6 +21,7 @@ class InventoryItem implements CRUDInterface {
     if(!isset($this->business_id) && isset($_COOKIE['business_id'])){
       $this->business_id = $_COOKIE['business_id'];
     }
+    $this->in_stock = intval(intval($this->stock_level) > 0);
     return $this;
   }
 

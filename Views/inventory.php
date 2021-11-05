@@ -78,16 +78,6 @@ foreach($inventory_items as $inventory_item){
         </div>
 
         <div class="left_container">
-          <label for="in_stock">In Stock</label>
-        </div>
-        <div class="right_container">
-          <select name="in_stock" id="in_stock">
-            <option value="1">Yes</option>
-            <option value="0">No</option>
-          </select>
-        </div>
-
-        <div class="left_container">
           <label for="stock_level">Stock level</label>
         </div>
         <div class="right_container">

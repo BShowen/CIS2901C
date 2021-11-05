@@ -31,18 +31,6 @@
           <input type="text" id="item_description" name="item_description" placeholder="<?php echo $item_description; ?>" >
         </div>
         <hr>
-        
-        <div class="left_container">
-          <p>In stock?</p>
-        </div> 
-        <div class="right_container">
-        <?php $in_stock = $item->in_stock; ?>
-          <select name="in_stock" id="in_stock">
-            <option value="1" <?php echo $in_stock ? "selected" : "";?>>Yes</option>
-            <option value="0" <?php echo $in_stock ? "" : "selected" ?>>No</option>
-          </select>
-        </div>
-        <hr>
 
         <div class="left_container">
           <p>Stock level</p>

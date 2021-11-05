@@ -4,7 +4,7 @@ require __DIR__.'/../Models/Message.php';
 require __DIR__.'/../Models/InventoryItem.php';
 
 $params = get_filtered_post_params();
-$params['in_stock'] = intval($params['in_stock']);
+// $params['in_stock'] = intval($params['in_stock']);
 $params['stock_level'] = intval($params['stock_level']);
 $params['price'] = floatval($params['price']);
 
