@@ -49,9 +49,9 @@ if(!empty($employees)){
 
 <main>
  
-  <?php
-    require __DIR__.'/partials/_user_message.php';
-  ?>
+  <div class="notification_container">
+    <?php require __DIR__.'/partials/_user_message.php'?>
+  </div>
   
   <div class="table_container">
     <table>

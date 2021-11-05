@@ -12,10 +12,10 @@ class Message{
   public function __toString(){
     switch($this->type){
       case "error":
-        return "<h3 class='user_message_text'> $this->message </h3>";
+        return "<h3 class='notification error'> $this->message </h3>";
         break;
       case "success":
-        return "<h3 class='user_message_text'> $this->message </h3>";
+        return "<h3 class='notification success'> $this->message </h3>";
         break;
       default:
         return "Invalid error type";

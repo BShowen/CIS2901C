@@ -10,14 +10,15 @@ $edit_item_details = isset($_GET['edit']) ? boolval($_GET['edit']) : 0 ;
 ?>
 
 <main>
-  <?php 
-    require __DIR__.'/partials/_user_message.php';
+  <div class="notification_container">
+    <?php require __DIR__.'/partials/_user_message.php'; ?>
+  </div>
 
+  <?php 
     if($edit_item_details){
       require __DIR__."/partials/inventory_page/_item_details_edit.php";
     }else{
       require __DIR__."/partials/inventory_page/_item_details.php";
     }
-  
   ?>
 </main>

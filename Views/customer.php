@@ -61,9 +61,11 @@ if($invoices_requested){
 ?>
 
 <main>
-  <?php 
-    require __DIR__.'/partials/_user_message.php';
-
+  <div class="notification_container">
+    <?php require __DIR__.'/partials/_user_message.php'; ?>
+  </div>
+    
+  <?php   
     if($edit_customer_details){
       require __DIR__."/partials/customer_page/_customer_details_edit.php";
     }else{

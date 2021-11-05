@@ -38,9 +38,9 @@ foreach($customers as $customer){
 }
 ?>
 <main>
-  <div class="user_message">
-    <?php display_session_messages(); ?>
-  </div>
+  <div class="notification_container">
+    <?php require __DIR__.'/partials/_user_message.php'?>
+  <div>
 
   <div class="table_container">
     <table>

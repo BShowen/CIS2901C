@@ -67,31 +67,48 @@ main {
   line-height: 1.4em;
 }
 
-.user_message {
+.notification_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   height: min-content;
-  text-align: center;
-  border-radius: 1em;
   overflow: hidden;
-  background-color: #d4edda;
   position: absolute;
   top: 1.5em;
+  /* bottom: 1.5em; */
   right: 100px;
   left: 350px;
 }
 
-.user_message .user_message_text {  
-  border-color: #c3e6cb;
-  color: #155724;
+.notification_container .notification {  
+  border-radius: 1em;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 15px 15px;
   font-size: smaller;
+  margin: 5px 0;
 }
 
-.login_message{
-  left: 100px;
+.notification.error {
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  background-color: #F8D7DA;
+}
+
+.notification.success {
+  border: 1px solid #c3e6cb;
+  background-color: #d4edda;
+  color: #155724;
+}
+
+/* 
+  This fixes the problem of none-center alerts displayed on the login page. 
+*/
+.center_fix{
+  left:100px;
 }
 
 div.table_container{

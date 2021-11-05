@@ -122,12 +122,10 @@ if(isset($_GET['signup'])){
     </div>
   </div>
 
-  <div class='user_message login_message'>
-    <?php 
-    display_session_messages();
-    ?>
+  <div class="notification_container center_fix">
+    <?php require __DIR__.'/Views/partials/_user_message.php'; ?>
   </div>
-
+  
 </main>
 
 <?php
