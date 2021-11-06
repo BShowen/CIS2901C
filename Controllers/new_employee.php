@@ -6,13 +6,18 @@ require __DIR__.'/../Models/Employee.php';
 
 $params = get_filtered_post_params();
 
-// I set the business_id on the server side. If is set the business_id using a hidden form input, then this can lead to problems if a users changes the value of this field before submitting. Its safer to set the business_id on the server side. 
+/*
+I set the business_id on the server side. If I set the business_id using a hidden form input, then this can lead to problems if a users changes the value of this field before submitting. Its safer to set the business_id on the server side. 
+*/
 $params['business_id'] = intval($_COOKIE['business_id']);
 
 // This is a hack. Users should be given temp passwords. Then when they log in they should be instructed to change their password. I have no implemented this yet. So this is my fix for now. 
-$params['password'] = strval($_POST['temp_password']);
+// $params['password'] = strval($_POST['temp_password']);
 
 $employee = new Employee($params);
+$employee->password = strtolower($employee->first_name);
+$employee->verify_password = strtolower($employee->first_name);
+$employee->temp_password = true;
 
 $messages = [];
 if($employee->save()){

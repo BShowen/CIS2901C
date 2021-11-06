@@ -50,7 +50,7 @@ if(!empty($employees)){
 <main>
  
   <div class="notification_container">
-    <?php require __DIR__.'/partials/_user_message.php'?>
+    <?php display_session_messages(); ?>
   </div>
   
   <div class="table_container">
@@ -110,13 +110,6 @@ if(!empty($employees)){
           </div>
           <div class="right_container">
             <input type="text" id="email_address" name="email_address">
-          </div>
-
-          <div class="left_container">
-            <label for="city">Password</label>
-          </div>
-          <div class="right_container">
-            <input type="password" id="temp_password" name="temp_password">
           </div>
 
           <div class="left_container">

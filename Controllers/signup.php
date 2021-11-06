@@ -17,24 +17,18 @@ foreach($keys as $key){
 }
 $employee_params['is_admin'] = 1;
 $employee = new Employee($employee_params);
-// is_valid needs to be called before the business_id is set on the employee object, otherwise is_valid will return true
-// even if the password doesn't match the password verify. This is a flaw in the logic with how the has_valid_attributes method 
-// works in the Employee model. 
+
 if($business->is_valid){
   $business->save();
-  if($employee->is_valid){
-    $employee->business_id = $business->business_id;
-    if($employee->save()){
-      set_employee_cookie($employee);
-      redirect_to("dashboard");
-      exit;
-    }
+  $employee->business_id = $business->business_id;
+  if($employee->save()){
+    set_employee_cookie($employee);
+    redirect_to("dashboard");
+    exit;
   }
   /*
   If this is reached then that means the employee object was not valid to save, but the business object was valid and
-  has been saved to the database. We now need to delete the business object from that database because it doesn't have any employees.
-  If the user decides to close the browser then we have an orphaned business object in the database. We need to delete the business
-  object.
+  has been saved to the database. We now need to delete the business object from that database because it doesn't have any employees. If the user decides to close the browser then we have an orphaned business object in the database.
   */
   $business->delete();
 }

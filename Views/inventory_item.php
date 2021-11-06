@@ -11,7 +11,7 @@ $edit_item_details = isset($_GET['edit']) ? boolval($_GET['edit']) : 0 ;
 
 <main>
   <div class="notification_container">
-    <?php require __DIR__.'/partials/_user_message.php'; ?>
+    <?php display_session_messages(); ?>
   </div>
 
   <?php 

@@ -24,7 +24,7 @@ foreach($invoices as $invoice){
 ?>
 <main>
   <div class="notification_container">
-    <?php require __DIR__.'/partials/_user_message.php'?>
+    <?php display_session_messages(); ?>
   </div>
 
   <div class="table_container">

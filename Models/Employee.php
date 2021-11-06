@@ -24,9 +24,49 @@ class Employee implements CRUDInterface {
   public function __construct($params){
     $this->db = new Database();
     $this->set_attributes($params);
+    // echo "Exporting: <br/>";
+    // echo "password = {$this->password}<br/>";
+    // echo "password_verify = {$this->verify_password}<br/>";
+    // exit;
     return $this;
   }
 
+  // Params is ['attribute_name'=>value, 'attribute_name'=>value]
+  private function set_attributes($params){
+    if(isset($params)){
+      // This loop will set the attributes that were passed in. 
+      foreach($params as $attribute_name => $attribute_value){
+        switch($attribute_name){
+          case "first_name":
+            $this->$attribute_name = strtolower($attribute_value);
+            break;
+          case "last_name":  
+            $this->$attribute_name = strtolower($attribute_value);
+            break;
+          case "temp_password": 
+            $this->$attribute_name = intval($attribute_value);
+            break;
+          case "password":
+            $this->$attribute_name = $attribute_value;
+            break;
+          default:
+            $this->$attribute_name = $attribute_value;
+            break;
+        }
+      }
+      
+      // Any attributes that were not set will now be set to their default values.   
+      // The business_id is needs to be set. 
+      if(!isset($this->business_id) && isset($_COOKIE['business_id'])){
+        $this->business_id = $_COOKIE['business_id'];
+      }
+
+      $this->password_reset_token = '';
+      if(!isset($this->temp_password)){
+        $this->temp_password = 0;
+      }
+    }
+  }
   
   public function __get($name){
     switch($name){
@@ -39,8 +79,28 @@ class Employee implements CRUDInterface {
       case 'last_name':
         return ucfirst($this->last_name);
         break;
+      case 'temp_password':
+        return $this->temp_password;
+        break;
       default:
         return $this->$name;
+        break;
+    }
+  }
+
+  public function __set($name, $value){
+    switch(strtolower($name)){
+      case "business_id":
+        $this->business_id = $value;
+        break;
+      case "temp_password":
+        $this->temp_password = intval($value);
+        break;
+      case "password": 
+        $this->password = $value;
+        break;
+      case "verify_password": 
+        $this->verify_password = $value;
         break;
     }
   }
@@ -113,32 +173,6 @@ class Employee implements CRUDInterface {
     return $child_records;  
   }
 
-  // Params is ['attribute_name'=>value, 'attribute_name'=>value]
-  private function set_attributes($params){
-    if(isset($params)){
-      // This loop will set the attributes that were passed in. 
-      foreach($params as $attribute_name => $attribute_value){
-        if($attribute_name == 'first_name' || $attribute_name == 'last_name' ){
-          $this->$attribute_name = strtolower($attribute_value);
-        }else{
-          $this->$attribute_name = $attribute_value;
-        }
-      }
-      
-      // Any attributes that were not set will now be set to their default values.   
-
-      // The business_id is needs to be set. 
-      if(!isset($this->business_id) && isset($_COOKIE['business_id'])){
-        $this->business_id = $_COOKIE['business_id'];
-      }
-
-      $this->password_reset_token = '';
-      if(!isset($this->temp_password)){
-        $this->temp_password = '';
-      }
-    }
-  }
-
   // Returns an array os Employee objects. 
   public static function all(){
     $database = new Database();
@@ -173,6 +207,7 @@ class Employee implements CRUDInterface {
   }
 
   // Attempts to save the current object to the database. Returns a boolean value. 
+  // This function is called only when we are creating a new employee. This function is NOT called when updating an employee. 
   public function save(){
     if( $this->can_save() ){ 
       /* 
@@ -196,7 +231,7 @@ class Employee implements CRUDInterface {
       return $results[0]; 
     }
     //If this is reached then the employee object has invalid attributes. 
-    return False; 
+    return false; 
   }
 
   // This function builds an insertion query string. Called by $this->save();
@@ -222,50 +257,6 @@ class Employee implements CRUDInterface {
       array_push($attributes, $row['Field']);
     }
     return array_slice($attributes, 1);
-  }
-
-  // Returns a boolean indicating whether or not the current state of the object is valid to save in the database. 
-  private function has_valid_attributes(){
-    $this->errors = []; //Reset the errors
-
-    if(strlen(trim($this->first_name)) == 0 || strlen(trim($this->first_name)) > 20){
-      array_push($this->errors, "Employee first name must be greater than 0 characters and less than 21 characters.");
-    }
-
-    if(strlen(trim($this->last_name)) == 0 || strlen(trim($this->last_name)) > 20){
-      array_push($this->errors, "Employee last name must be greater than 0 characters and less than 21 characters.");
-    }
-
-    if(strlen(trim($this->user_name)) == 0 || strlen(trim($this->user_name)) > 50){
-      array_push($this->errors, "Employee user name must be greater than 0 characters and less than 21 characters.");
-    }elseif($this->db->exists(['user_name'=>$this->user_name], 'Employees')){
-      array_push($this->errors, "This user name is already in use.");
-    }
-
-    if(strlen(trim($this->email_address)) == 0 || strlen(trim($this->email_address)) > 50){
-      array_push($this->errors, "Employee email address must be greater than 0 characters and less than 51 characters.");
-    }elseif($this->db->exists(['email_address'=>$this->email_address], 'Employees')){
-      array_push($this->errors, "This email address is already in use.");
-    } 
-    
-
-    if(strlen(trim($this->password)) == 0 || strlen(trim($this->password)) > 20){
-      array_push($this->errors, "Employee password must be greater than 0 characters and less than 21 characters.");
-    }
-
-    /*
-    If the business_id is not set then that means we are creating a new user and we must perform checks on the password.
-    If the business_id is set then this check will be skipped. There is no need to check the password. 
-    */
-    if(!isset($this->business_id)){
-      if(strlen(trim($this->password)) == 0 && strlen(trim($this->temp_password) == 0)){
-        array_push($this->errors, "Password is required.");
-      }elseif($this->password != $this->verify_password){
-        array_push($this->errors, "Passwords do not match.");
-      } 
-    }
-
-    return count($this->errors) == 0;
   }
 
   public function update(){
@@ -317,6 +308,13 @@ class Employee implements CRUDInterface {
     foreach($attribute_names as $attribute_name){
       $this->validate_attribute($attribute_name);
     }
+     /*
+    Manually check the password attribute. 
+    can_save() will verify only the attributes that are in the database. 
+    "password" is not an attribute in the database so password will not be checked. 
+    "password_digest" is the attribute for passwords in the database. However, we don't check password_digest for users who have not been saved. 
+    */
+    $this->validate_attribute("password");
     return count($this->errors) == 0;
   }
 
@@ -352,16 +350,9 @@ class Employee implements CRUDInterface {
       case 'password':
         if(strlen(trim($this->password)) == 0 || strlen(trim($this->password)) > 20){
           array_push($this->errors, "Employee password must be greater than 0 characters and less than 21 characters.");
-        }
-        // If the business_id is not set then that means we are creating a new user and we must perform checks on the password.
-        // If the business_id is set then this check will be skipped. There is no need to check the password. 
-        if(!isset($this->business_id)){
-          if(strlen(trim($this->password)) == 0 && strlen(trim($this->temp_password) == 0)){
-            array_push($this->errors, "Password is required.");
-          }elseif($this->password != $this->verify_password){
-            array_push($this->errors, "Passwords do not match.");
-          } 
-        }
+        }elseif($this->password != $this->verify_password){
+          array_push($this->errors, "Passwords do not match.");
+        } 
         break;
       default:
         break;
