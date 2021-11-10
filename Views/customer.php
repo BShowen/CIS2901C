@@ -74,6 +74,8 @@ if($invoices_requested){
   
     if(count($customer->sales) > 0){
       require __DIR__.'/partials/customer_page/_customer_sales.php';
+    }else{
+      echo "<div style='text-align:center;'><h3>This customer does not have any sales.</h3></div>";
     }
   
     if($invoices_requested){ 

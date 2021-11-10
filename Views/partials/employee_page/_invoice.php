@@ -14,7 +14,6 @@
             <th scope="col">Due date</th>
             <th scope="col">Total</th>
             <th scope="col">Web link</th>
-            <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>

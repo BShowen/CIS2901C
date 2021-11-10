@@ -21,7 +21,7 @@
       </div>
       <hr>
       
-      <div class="left_container">
+      <!-- <div class="left_container">
         <p>Phone</p>
       </div> 
       <div class="right_container">
@@ -35,7 +35,7 @@
       <div class="right_container">
         <p><?php ?></p>
       </div>
-      <hr>
+      <hr> -->
 
       <div class="left_container">
         <p>Street address</p>

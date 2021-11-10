@@ -12,7 +12,6 @@
             <th scope="col">Sales person</th>
             <th scope="col">Sale total</th>
             <th scope="col">Sale date</th>
-            <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
