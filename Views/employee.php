@@ -16,13 +16,14 @@ $edit_employee_details = isset($_GET['edit']) ? boolval($_GET['edit']) : 0 ;
 // Create table rows for each sale.
 forEach($sales as $sale){
   $sales_table_rows .= "
-  <tr>
-    <!--class='clickable' 
-    data-href='/businessManager/Views/employee.php?employee_id={$employee->employee_id}&sale_id=$sale->sale_id' data-id='$sale->sale_id'-->
+  <tr
+    class='clickable' 
+    data-href='/businessManager/Views/sale.php?sale_id=$sale->sale_id' 
+  >
     <td class='sale_number'>$sale->sale_id</td>
     <td class='sales_person'>{$sale->sales_person->first_name}</td>
-    <td class='sale_total'>$sale->sale_total</td>
-    <td class='sale_date'>$sale->sale_date</td>
+    <td class='sale_total'>$sale->sale_total_formatted</td>
+    <td class='sale_date'>$sale->sale_date_formatted</td>
   </tr>";
 }
 
