@@ -11,17 +11,17 @@ $table_rows = "";
 foreach($sales as $sale){
   $current_row++;
   if( ($current_row == $last_row) && table_has_new_row() ){
-    $table_rows.="<tr class='new_row' data-href='/businessManager/Views/sale.php?sale_id=$sale->sale_id'>";
+    $table_rows.="<tr class='clickable new_row' data-href='/businessManager/Views/sale.php?sale_id=$sale->sale_id'>";
   }else{
-    $table_rows.="<tr data-href='/businessManager/Views/sale.php?sale_id=$sale->sale_id'>";
+    $table_rows.="<tr class='clickable' data-href='/businessManager/Views/sale.php?sale_id=$sale->sale_id'>";
   }
   $sales_person = $sale->sales_person->first_name;
   $customer = $sale->customer;
   $table_rows.="<td>$sale->sale_id</td>
     <td>$sales_person</td>
     <td>$customer->first_name</td>
-    <td>$sale->sale_total</td>
-    <td>$sale->sale_date</td>
+    <td>$sale->sale_total_formatted</td>
+    <td>$sale->sale_date_formatted</td>
     <td class='action_buttons'>
       <a class='action_button' href='/businessManager/Controllers/delete_sale.php?sale_id=$sale->sale_id'>Delete</a>
     </td>

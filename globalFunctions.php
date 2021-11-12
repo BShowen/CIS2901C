@@ -42,9 +42,9 @@ function redirect_to($page, $query_parameters = null){
     case "login":
       Header($root."/index.php");
       break;
-      case "signup":
-        Header($root."/index.php?signup=1");
-        break;
+    case "signup":
+      Header($root."/index.php?signup=1");
+      break;
     case "dashboard":
       Header($root."/Views/dashboard.php");
       break;
@@ -72,7 +72,10 @@ function redirect_to($page, $query_parameters = null){
     case "sales":
       Header($root."/Views/sales.php");
       break;
-  }
+    case "sale":
+      Header($root."/Views/sale.php".$query_parameters);
+      break;
+    }
 }
 
 // This function sets the appropriate cookies for a logged in user. 

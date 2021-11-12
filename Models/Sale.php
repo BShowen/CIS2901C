@@ -53,6 +53,26 @@ class Sale implements CRUDInterface {
         break;
       case 'customer':
         return Customer::find_by_id($this->customer_id);
+        break;
+      case "sale_date_form_value":
+        /*
+        Returns a date in the proper format to be the value of a form date input. 
+        This is used as a placeholder in the sale edit form
+        */
+        $date = date_create($this->sale_date);
+        return date_format($date,"Y-m-d"); 
+        break;
+      case "sale_date":
+        $date = date_create($this->sale_date);
+        return date_format($date,"m-d-Y"); 
+        break;
+      case "sale_date_formatted":
+        $date = date_create($this->sale_date);
+        return date_format($date,"F jS Y"); 
+        break;
+      case "sale_total_formatted":
+        return "$".$this->sale_total;
+        break;
       default: 
         return $this->$name;
         break;
@@ -142,8 +162,7 @@ class Sale implements CRUDInterface {
 
   // Attempts to save a record in the database. Returns true or false. 
   public function save(){
-    $has_valid_attributes = $this->has_valid_attributes();
-    if($has_valid_attributes && !$this->sale_exists){ 
+    if( $this->can_save() ){ 
       //if true then we are saving a new Sale
       $query = $this->build_insertion_query();
 
@@ -156,25 +175,13 @@ class Sale implements CRUDInterface {
       }
       /////////////////////////////////////////////////////////////////////////////////////////////////////////
       $results = $this->db->execute_sql_statement($query, $params);
+      /*
+      $results is a boolean value. This value CAN be false if something goes wrong in the database. For this reason I don't "return true", I return what the database returns.  
+      */
       return $results[0]; 
-      //This is a boolean value. This value CAN be false is something goes wrong in the database. 
-      // For this reason I don't simply return true. I return what the database returns. 
-    }elseif($has_valid_attributes && $this->sale_exists){ 
-      //if true then we are updating an existing sale
-      return $this->update();
     }
     //If this is reached then the sale object has invalid attributes. 
     return False; 
-  }
-
-  // This will update a record in the database. Returns true or false. 
-  private function update(){
-    $params = ['sale_id'=>$this->sale_id];
-    $attribute_names = $this->get_attribute_names();
-    foreach($attribute_names as $attribute_name){
-      $params[$attribute_name] = $this->$attribute_name;
-    }
-    return $this->db->update($params, 'Sales')[0];
   }
 
   // This function queries the database ands returns a list of attributes required for the object. 
@@ -190,15 +197,22 @@ class Sale implements CRUDInterface {
     return array_slice($attributes, 1);
   }
 
-  // Returns a boolean indicating whether or not the current state of the object is valid to save in the database. 
-  private function has_valid_attributes(){
-    if($this->sale_total <= 0){
-      array_push($this->errors, 'A sale must have a total greater than 0.');
+  /*
+  This function will validate any attribute that you ask it to. $attribute_name equals a string representation of what attribute to check. For example, validate_attribute("first_name"); 
+  */ 
+  private function validate_attribute($attribute_name){
+    switch( strtolower($attribute_name) ){
+      case "sale_total":
+        if($this->sale_total <= 0){
+          array_push($this->errors, 'A sale must have a total greater than 0.');
+        }
+        break;
+      case "sale_date":
+        if(strlen(trim($this->sale_date)) == 0){
+          array_push($this->errors, 'A sale date is required for a sale.');
+        }
+        break;
     }
-    if(strlen(trim($this->sale_date)) == 0){
-      array_push($this->errors, 'A sale date is required for a sale.');
-    }
-    return count($this->errors) == 0;
   }
 
   // This function builds an insertion query string. Called by $this->save();
@@ -225,6 +239,48 @@ class Sale implements CRUDInterface {
       return $this->db->delete($params, 'Sales');
     }
     return False;
+  }
+
+  /* 
+  This function validates only the attributes that the object currently has set. For example, if $this->name is set and $this->age is not set, then this function makes sure to validate only $this->name and not $this->age. 
+  */
+  public function can_update(){
+    $this->errors = [];
+    $attribute_names = $this->get_attribute_names();
+    foreach($attribute_names as $attribute_name){
+      if(isset($this->$attribute_name)){
+        $this->validate_attribute($attribute_name);
+      }
+    }
+    return count($this->errors) == 0;
+  }
+
+  /*
+  This function attempts to update the record in the database. This function returns True or False. This function works by validating only the attributes that are set. If all of the attributes (that are set) are valid, then the update occurs. 
+  */
+  public function update(){
+    if($this->can_update()){
+      $params = ['sale_id'=>$this->sale_id];
+      $attribute_names = $this->get_attribute_names();
+      foreach($attribute_names as $attribute_name){
+        if($this->$attribute_name != null){
+          $params[$attribute_name] = $this->$attribute_name;
+        }
+      }
+      unset($params['business_id']);
+      return $this->db->update($params, 'Sales')[0];  
+    }
+    return false;
+  }
+
+  // Returns a boolean indicating whether or not the current state of the object is valid to save in the database. 
+  private function can_save(){
+    $this->errors = [];
+    $attribute_names = $this->get_attribute_names();
+    foreach($attribute_names as $attribute_name){
+      $this->validate_attribute($attribute_name);
+    }
+    return count($this->errors) == 0;
   }
 
 }
