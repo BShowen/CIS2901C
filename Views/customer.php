@@ -18,7 +18,7 @@ forEach($sales as $sale){
   $sales_table_rows .= "
   <tr 
     class='clickable' 
-    data-href='/businessManager/Views/customer.php?customer_id={$customer->customer_id}&sale_id=$sale->sale_id' data-id='$sale->sale_id'>
+    data-href='/businessManager/Views/sale.php?sale_id=$sale->sale_id' data-id='$sale->sale_id'>
     <td class='sale_number'>$sale->sale_id</td>
     <td class='sales_person'>{$sale->sales_person->first_name}</td>
     <td class='sale_total'>$sale->sale_total_formatted</td>
@@ -26,6 +26,7 @@ forEach($sales as $sale){
     <td class='action_buttons'>
       <a class='action_button' href='/businessManager/Controllers/delete_sale.php?sale_id=$sale->sale_id'>Delete</a>
       <a class='action_button' data-id='$customer->customer_id' href='/businessManager/Views/customer.php?customer_id={$customer->customer_id}&sale_id={$sale->sale_id}&new_invoice=1'>Create invoice</a>
+      <a class='action_button' href='/businessManager/Views/customer.php?customer_id={$customer->customer_id}&sale_id=$sale->sale_id'>Invoices</a>
     </td>
   </tr>";
 }
