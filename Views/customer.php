@@ -38,12 +38,15 @@ if($invoices_requested){
   $invoices = $sale->invoices;
   if(!empty($invoices)){
     forEach($invoices as $invoice){
-      $invoice_table_rows.="<tr>
+      $invoice_table_rows.="<tr
+                              class = 'clickable'
+                              data-href='/businessManager/Views/invoice.php?invoice_id=$invoice->invoice_id'
+                            >
                               <td>$sale->sale_id</td>
                               <td>$invoice->invoice_id</td>
                               <td>$invoice->sent_date</td>
                               <td>$invoice->due_date</td>
-                              <td>$invoice->total</td>
+                              <td>$invoice->total_formatted</td>
                               <td>$invoice->web_link</td>
                               <td class='action_buttons'>
                               <a class='action_button' href='/businessManager/Controllers/delete_invoice.php?invoice_id=$invoice->invoice_id'>Delete</a> 

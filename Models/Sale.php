@@ -71,7 +71,7 @@ class Sale implements CRUDInterface {
         return date_format($date,"F jS Y"); 
         break;
       case "sale_total_formatted":
-        return "$".$this->sale_total;
+        return "$".number_format($this->sale_total, 2);
         break;
       default: 
         return $this->$name;

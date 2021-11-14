@@ -51,6 +51,9 @@ function redirect_to($page, $query_parameters = null){
     case "invoices":
       Header($root."/Views/invoices.php");
       break;
+    case "invoice":
+      Header($root."/Views/invoice.php".$query_parameters);
+      break;
     case "customers":
       Header($root."/Views/customers.php");
       break;

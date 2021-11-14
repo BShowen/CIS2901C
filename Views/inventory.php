@@ -20,7 +20,7 @@ foreach($inventory_items as $inventory_item){
     <td class='item_description'>$inventory_item->item_description</td>
     <td class='in_stock'>$in_stock</td>
     <td class='stock_level'>$inventory_item->stock_level</td>
-    <td class='price'>$inventory_item->price</td>
+    <td class='price'>$inventory_item->price_formatted</td>
     <td class='action_buttons'>
       <a class='action_button' href='/businessManager/Controllers/delete_inventory_item.php?item_id=$inventory_item->item_id'>Delete</a> <!-- |
       <a class='action_button' href='#'>Edit</a> -->

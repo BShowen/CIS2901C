@@ -45,7 +45,7 @@
           <p>Price</p>
         </div> 
         <div class="right_container">
-          <p><?php $price = $item->price; ?></p>
+          <p><?php $price = $item->price_formatted; ?></p>
           <input type="number" id="price" name="price" step="0.01" min="0" placeholder="<?php echo $price; ?>" >
         </div>
         <hr>

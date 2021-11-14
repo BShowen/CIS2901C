@@ -9,11 +9,14 @@ $invoices = Invoice::all();
 $table_rows = "";
 foreach($invoices as $invoice){
   $customer_full_name = $invoice->customer->first_name.' '.$invoice->customer->last_name;
-  $table_rows.="<tr>
+  $table_rows.="<tr
+                  class = 'clickable'
+                  data-href='/businessManager/Views/invoice.php?invoice_id=$invoice->invoice_id'
+                >
                   <td>$customer_full_name</td>  
-                  <td>$invoice->sent_date</td>
-                  <td>$invoice->due_date</td>
-                  <td>$invoice->total</td>
+                  <td>$invoice->sent_date_formatted</td>
+                  <td>$invoice->due_date_formatted</td>
+                  <td>$invoice->total_formatted</td>
                   <td>$invoice->web_link</td>
                   <td class='action_buttons'>
                     <a class='action_button' href='/businessManager/Controllers/delete_invoice.php?invoice_id=$invoice->invoice_id'>Delete</a> <!-- | 

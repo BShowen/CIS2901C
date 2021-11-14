@@ -45,6 +45,9 @@ class InventoryItem implements CRUDInterface {
       case "item_name": 
         return ucwords($this->item_name);
         break;
+       case "price_formatted":
+        return "$".number_format($this->price, 2);
+        break;
       default: 
         return $this->$name;
         break;

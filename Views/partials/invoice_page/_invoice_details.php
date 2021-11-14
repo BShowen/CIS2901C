@@ -1,47 +1,47 @@
 <div class="card">
   <div class="card_title">
-    <h1>Item details</h1>
+    <h1>Invoice details</h1>
   </div>
 
   <div class="card_details">
     <div class="grid_container">
       <div class="left_container">
-        <p>Item name</p>
+        <p>Invoice number</p>
       </div> 
       <div class="right_container">
-        <p><?php echo $item->item_name; ?></p>
+        <p><?php echo $invoice->invoice_id; ?></p>
       </div>
       <hr>
 
       <div class="left_container">
-        <p>Item description</p>
+        <p>Customer</p>
       </div> 
       <div class="right_container">
-        <p><?php echo $item->item_description; ?></p>
+        <p><?php echo $invoice->customer->first_name; ?></p>
       </div>
       <hr>
       
       <div class="left_container">
-        <p>In stock?</p>
+        <p>Invoice total</p>
       </div> 
       <div class="right_container">
-        <p><?php echo $item->in_stock ? "Yes" : "No" ; ?></p>
+        <p><?php echo $invoice->total_formatted; ?></p>
       </div>
       <hr>
       
       <div class="left_container">
-        <p>Stock level</p>
+        <p>Sent date</p>
       </div> 
       <div class="right_container">
-        <p><?php echo $item->stock_level; ?></p>
+        <p><?php echo $invoice->sent_date_formatted; ?></p>
       </div>
       <hr>
 
       <div class="left_container">
-        <p>Price</p>
+        <p>Due date</p>
       </div>
       <div class="right_container">
-        <p><?php echo $item->price_formatted; ?></p>
+        <p><?php echo $invoice->due_date_formatted; ?></p>
       </div>
       <hr>
 
