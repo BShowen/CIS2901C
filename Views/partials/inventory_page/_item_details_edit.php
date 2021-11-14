@@ -28,7 +28,7 @@
         </div> 
         <div class="right_container">
           <?php $item_description = $item->item_description; ?>
-          <input type="text" id="item_description" name="item_description" placeholder="<?php echo $item_description; ?>" >
+          <textarea type="text" id="item_description" name="item_description" placeholder="<?php echo $item_description; ?>" ></textarea>
         </div>
         <hr>
 
